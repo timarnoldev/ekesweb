@@ -13,9 +13,10 @@ let controls:MapControls;
 export let worldmesh:InstancedMesh;
 export let actormesh:InstancedMesh;
 
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2( 1, 1 );
 
 export let aspect = 1.5;
-
 
 const color = new THREE.Color();
 const matrix = new THREE.Matrix4();
@@ -25,13 +26,14 @@ export function register(canvas:HTMLCanvasElement) {
 
     scene = new THREE.Scene();
 
+    raycaster.params.Line.threshold
+
     camera = new THREE.OrthographicCamera(-1.5, 1.5, 1, -1); //width / - 2, width / 2, height / 2, height / - 2, 0.1, 2000
 
     renderer = new THREE.WebGLRenderer( { canvas });
     renderer.setClearColor(new THREE.Color('#14002b'),1);
 
     camera.position.z = 5;
-
     controls = new MapControls( camera, renderer.domElement );
     //controls.enableRotate = false;
     controls.screenSpacePanning = true;
@@ -47,7 +49,8 @@ export function register(canvas:HTMLCanvasElement) {
     worldmesh = new THREE.InstancedMesh( geometry, material, 15000 );
 
     var actormaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFFF } );
-    const actorgeometry = new THREE.CircleGeometry( 0.006 );
+    const actorgeometry = new THREE.CylinderGeometry( 0.006,0.006, 1 );
+    actorgeometry.rotateX( Math.PI / 2 );
     actormesh = new THREE.InstancedMesh(actorgeometry,actormaterial,1200);
     actormesh.frustumCulled = false;
 
@@ -87,17 +90,26 @@ export function register(canvas:HTMLCanvasElement) {
     scene.add(actormesh);
     scene.add(worldmesh);
 
-    const axesHelper = new THREE.AxesHelper( 5 );
-    scene.add( axesHelper );
 
 
-    const geometry1 = new THREE.BoxGeometry( 2, 2, 1 );
-    const material1 = new THREE.MeshBasicMaterial( { color: 0x00ffff } );
-    const cube = new THREE.Mesh( geometry1, material1 );
-    cube.position.x = 1;
-    cube.position.y = 1;
-    cube.position.z = 0;
-    //scene.add( cube );
+
+    window.addEventListener("resize", () => {
+        let newheight = canvas.parentElement!.clientWidth/1.5;
+        camera.updateMatrix();
+        renderer.setSize( canvas.parentElement!.clientWidth, newheight);
+        canvas.width = canvas.parentElement!.clientWidth;
+        canvas.height = newheight;
+
+    });
+
+    canvas.addEventListener("mousemove", (event) => {
+        event.preventDefault();
+        let rect = canvas.getBoundingClientRect();
+        mouse.x = ( (event.clientX - rect.left) / rect.width ) * 2 - 1;
+        mouse.y = - ( (event.clientY - rect.top) / rect.height ) * 2 + 1;
+    });
+
+
 
 
 
@@ -143,6 +155,20 @@ export function updateData(evosim:EvolutionsSimulator) {
 export function animate() {
 
     controls.update();
+    raycaster.setFromCamera(mouse, camera);
+    const intersection = raycaster.intersectObject( actormesh );
+    if ( intersection.length > 0 ) {
+        console.log("found one!");
+
+        const instanceId = intersection[ 0 ].instanceId;
+
+        actormesh.setColorAt( instanceId!, color.setHex( 0xffffff ) );
+
+        actormesh.instanceColor!.needsUpdate = true;
+
+
+
+    }
     renderer.render( scene, camera );
 
 }
