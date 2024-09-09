@@ -69,7 +69,7 @@ export default function Simulator() {
             evosim.doStep();
             updateData(evosim);
             //console.timeEnd();
-        }, 1000);
+        }, 11);
 
         setIntervalID(intervalID);
 

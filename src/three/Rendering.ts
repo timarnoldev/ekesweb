@@ -49,12 +49,12 @@ export function register(canvas:HTMLCanvasElement) {
     worldmesh = new THREE.InstancedMesh( geometry, material, 15000 );
 
     var actormaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFFF } );
-    const actorgeometry = new THREE.CylinderGeometry( 0.006,0.006, 1 );
-    actorgeometry.rotateX( Math.PI / 2 );
+    const actorgeometry = new THREE.CircleGeometry( 0.012 );
+   // actorgeometry.rotateX( Math.PI / 2 );
     actormesh = new THREE.InstancedMesh(actorgeometry,actormaterial,1200);
-    actormesh.frustumCulled = false;
+   // actormesh.frustumCulled = false;
 
-    actormesh.instanceMatrix.setUsage( THREE.DynamicDrawUsage );
+   // actormesh.instanceMatrix.setUsage( THREE.DynamicDrawUsage );
 
     var i=0;
     for(var x=0;x<150;x++) {
@@ -105,8 +105,8 @@ export function register(canvas:HTMLCanvasElement) {
     canvas.addEventListener("mousemove", (event) => {
         event.preventDefault();
         let rect = canvas.getBoundingClientRect();
-        mouse.x = ( (event.clientX - rect.left) / rect.width ) * 2 - 1;
-        mouse.y = - ( (event.clientY - rect.top) / rect.height ) * 2 + 1;
+        mouse.x = ( ( event.clientX - rect.left ) / ( rect. right - rect.left ) ) * 2 - 1;
+        mouse.y = - ( ( event.clientY - rect.top ) / ( rect.bottom - rect.top) ) * 2 + 1;
     });
 
 
@@ -136,7 +136,7 @@ export function updateData(evosim:EvolutionsSimulator) {
     for(let i=0;i<1200;i++) {
         if(i < evosim.getActorManager().getActors().length) {
             let currentActor = evosim.getActorManager().getActors()[i];
-            actormatrix.setPosition(currentActor.getXPosition()/1500*2*aspect-aspect+0.006 ,currentActor.getYPosition()/1000*2-1+0.006,1.1);
+            actormatrix.setPosition(currentActor.getXPosition()/1500*2*aspect-aspect+0.006 ,currentActor.getYPosition()/1000*2-1+0.006,1);
             actormesh.setMatrixAt(i,actormatrix);
             actormesh.setColorAt(i, color.setHex(gen_color_table[currentActor.getGeneration() % 16]));
 
@@ -150,6 +150,8 @@ export function updateData(evosim:EvolutionsSimulator) {
     actormesh.updateMatrix();
     actormesh.instanceMatrix.needsUpdate = true;
     actormesh.instanceColor!.needsUpdate = true;
+    actormesh.computeBoundingSphere();
+    actormesh.computeBoundingBox();
 }
 
 export function animate() {
