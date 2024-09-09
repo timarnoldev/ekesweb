@@ -11,9 +11,9 @@ import {Sigmoid} from "@/backend/ai/sigmoid";
 import {EvolutionsSimulator} from "@/backend/EvolutionsSimulator";
 
 export class Creature extends Actor {
-    private brain: NeuronalNetwork;
+    public brain: NeuronalNetwork;
     public feelers: Feeler[] = [];
-    private energy: number = 200;
+    public energy: number = 200;
     private moveFactor: number = Variables.moveFactor;
     private rotateFactor: number = Variables.rotateFactor;
     private moveCostMult: number = Variables.moveCostMult;
@@ -27,13 +27,15 @@ export class Creature extends Actor {
     private eatAdmission: number = Variables.eatAdmission;
     private mutation_percentage: number = Variables.mutation_percentage;
     private mutation_neurons: number = Variables.mutation_neurons;
-    private costMult: number = 1;
-    private rotationAngle: number = 0;
-    private outMoveForward: number = 0;
-    private outRotateRight: number = 0;
-    private outRotateLeft: number = 0;
-    private outEat: number = 0;
+    public costMult: number = 1;
+    public rotationAngle: number = 0;
+    public outMoveForward: number = 0;
+    public outRotateRight: number = 0;
+    public outRotateLeft: number = 0;
+    public outEat: number = 0;
     private feelerLength: number = 15;
+    public childrenCount: number = 0;
+    public distanceMoved: number = 0;
 
 
     constructor() {
@@ -49,8 +51,9 @@ export class Creature extends Actor {
         this.rotationAngle = Math.random() * Math.PI * 2;
         this.brain = new NeuronalNetwork();
         this.brain.createInputNeurons(3 + this.feelers.length * 2);
-        this.brain.addHiddenLayer(20);
-        this.brain.addHiddenLayer(20);
+        this.brain.addHiddenLayer(40);
+        this.brain.addHiddenLayer(40);
+        this.brain.addHiddenLayer(40);
         this.brain.createOutputNeurons(5);
         this.brain.connectRandomFullMeshed();
         this.brain.addBiasForAllNeurons();
@@ -78,6 +81,7 @@ export class Creature extends Actor {
         for (const f of this.feelers) {
             f.calculateFeelerPosition(this.rotationAngle, this.getXPosition(), this.getYPosition());
         }
+
     }
 
     private generateFeelers(): void {
@@ -118,7 +122,7 @@ export class Creature extends Actor {
             this.costMult = this.permanentCostWater;
         }
         this.energy -= this.permanentCostLand * this.costMult;
-        this.costMult += this.age * 0.1;
+        this.costMult += this.age * 0.07//* 1/(this.childrenCount+1); //TODO experimental change
         if (this.energy < 100) {
             this.kill();
         }
@@ -130,6 +134,20 @@ export class Creature extends Actor {
             child.generateFromParent(this);
             this.es!.actorManager.getActors().push(child);
             this.energy -= this.createChildEnergy / 2 * this.costMult;
+            this.childrenCount++;
+        }/*else{
+            this.energy -= this.createChildEnergy / 4 * this.costMult;
+
+        }
+        */
+    }
+
+    public createFreeChild(amount: number): void {
+        for (let i = 0; i < amount; i++) {
+            const child = new Creature();
+            child.generateFromParent(this);
+            this.es!.actorManager.getActors().push(child);
+            this.childrenCount++;
         }
     }
 
@@ -157,6 +175,7 @@ export class Creature extends Actor {
     public moveForward(): void {
         this.XPosition += Math.cos(this.rotationAngle) * this.moveFactor * this.outMoveForward;
         this.YPosition += Math.sin(this.rotationAngle) * this.moveFactor * this.outMoveForward;
+        this.distanceMoved += Math.sqrt(Math.pow(Math.cos(this.rotationAngle) * this.moveFactor * this.outMoveForward, 2) + Math.pow(Math.sin(this.rotationAngle) * this.moveFactor * this.outMoveForward, 2));
         this.energy -= this.outMoveForward * this.moveCostMult * this.costMult;
     }
 
@@ -270,5 +289,9 @@ export class Creature extends Actor {
 
     public getBrain(): NeuronalNetwork {
         return this.brain;
+    }
+
+    public getEnergy(): number {
+        return this.energy;
     }
 }

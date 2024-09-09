@@ -9,6 +9,7 @@ export abstract class Actor {
     public killed: boolean = false;
     public isRandom: boolean = false;
     public generation: number = 1;
+    public invincible: boolean = false;
 
     public abstract calculateBrain(): void;
 
@@ -26,7 +27,9 @@ export abstract class Actor {
     }
 
     public kill(): void {
-        this.killed = true;
+        if(!this.invincible) {
+            this.killed = true;
+        }
     }
 
     public getGeneration(): number {

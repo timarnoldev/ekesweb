@@ -3,6 +3,7 @@ import { ActorManager } from './ActorManager';
 import { VirtualTileWorld } from './virtualtileworld/VirtualTileWorld';
 import { WorldGenerator } from './virtualtileworld/WorldGenerator';
 import { Time } from './Time';
+import {Creature} from "@/backend/actors/Creature";
 
 export class EvolutionsSimulator {
     public actorManager: ActorManager;
@@ -20,6 +21,8 @@ export class EvolutionsSimulator {
     public worldHeight: number = 100;
     public world: VirtualTileWorld;
     public ready: boolean = false;
+    public selectedCreature: Creature | null = null;
+    public followSelected: boolean = false;
 
     constructor() {
         this.world = new VirtualTileWorld(this.worldWidth, this.worldHeight, 10);

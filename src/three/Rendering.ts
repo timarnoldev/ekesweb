@@ -5,6 +5,7 @@ import { MapControls } from 'three/addons/controls/MapControls.js';
 import {EvolutionsSimulator} from "@/backend/EvolutionsSimulator";
 import {LandType} from "@/backend/virtualtileworld/LandType";
 import {gen_color_table} from "@/backend/utils/ColorUtils";
+import {Creature} from "@/backend/actors/Creature";
 
 let scene:Scene;
 let camera:Camera;
@@ -22,7 +23,7 @@ const color = new THREE.Color();
 const matrix = new THREE.Matrix4();
 
 
-export function register(canvas:HTMLCanvasElement) {
+export function register(canvas:HTMLCanvasElement, setSelectedCreature:(creature:Creature)=>void, evosim:EvolutionsSimulator) {
 
     scene = new THREE.Scene();
 
@@ -35,8 +36,9 @@ export function register(canvas:HTMLCanvasElement) {
 
     camera.position.z = 5;
     controls = new MapControls( camera, renderer.domElement );
-    //controls.enableRotate = false;
+    controls.enableRotate = false;
     controls.screenSpacePanning = true;
+    controls.dampingFactor = 0.05;
 
     //calculate height to fit aspect ratio of 1,5
     let newheight = canvas.clientWidth/1.5;
@@ -102,21 +104,43 @@ export function register(canvas:HTMLCanvasElement) {
 
     });
 
-    canvas.addEventListener("mousemove", (event) => {
+
+
+    canvas.addEventListener("click", (event) => {
         event.preventDefault();
         let rect = canvas.getBoundingClientRect();
         mouse.x = ( ( event.clientX - rect.left ) / ( rect. right - rect.left ) ) * 2 - 1;
         mouse.y = - ( ( event.clientY - rect.top ) / ( rect.bottom - rect.top) ) * 2 + 1;
-    });
+        raycaster.setFromCamera(mouse, camera);
+        const intersection = raycaster.intersectObject( actormesh );
+        if ( intersection.length > 0 ) {
+            console.log("found one!");
 
+            const instanceId = intersection[ 0 ].instanceId;
+
+           // actormesh.setColorAt( instanceId!, color.setHex( 0xffffff ) );
+           let creature = evosim.getActorManager().getActors()[instanceId!] as Creature;
+           selectedInstanceID = instanceId!;
+           evosim.selectedCreature = creature;
+           setSelectedCreature(creature);
+
+            actormesh.instanceColor!.needsUpdate = true;
+
+
+
+        }
+    });
 
 
 
 
 }
 const actormatrix = new THREE.Matrix4();
+let selectedInstanceID = -1;
+let simulator:EvolutionsSimulator;
 
 export function updateData(evosim:EvolutionsSimulator) {
+    simulator = evosim;
     let i =0;
     for(let x=0;x<evosim.getWorld().getWidth();x++) {
         for(let y=0;y<evosim.getWorld().getHeight();y++) {
@@ -136,7 +160,7 @@ export function updateData(evosim:EvolutionsSimulator) {
     for(let i=0;i<1200;i++) {
         if(i < evosim.getActorManager().getActors().length) {
             let currentActor = evosim.getActorManager().getActors()[i];
-            actormatrix.setPosition(currentActor.getXPosition()/1500*2*aspect-aspect+0.006 ,currentActor.getYPosition()/1000*2-1+0.006,1);
+            actormatrix.setPosition(currentActor.getXPosition()/1500*2*aspect-aspect+0.006 ,currentActor.getYPosition()/1000*2-1+0.006,1.1);
             actormesh.setMatrixAt(i,actormatrix);
             actormesh.setColorAt(i, color.setHex(gen_color_table[currentActor.getGeneration() % 16]));
 
@@ -152,25 +176,19 @@ export function updateData(evosim:EvolutionsSimulator) {
     actormesh.instanceColor!.needsUpdate = true;
     actormesh.computeBoundingSphere();
     actormesh.computeBoundingBox();
+
 }
 
 export function animate() {
 
     controls.update();
-    raycaster.setFromCamera(mouse, camera);
-    const intersection = raycaster.intersectObject( actormesh );
-    if ( intersection.length > 0 ) {
-        console.log("found one!");
 
-        const instanceId = intersection[ 0 ].instanceId;
-
-        actormesh.setColorAt( instanceId!, color.setHex( 0xffffff ) );
-
-        actormesh.instanceColor!.needsUpdate = true;
-
-
-
+    if(simulator.followSelected&& !simulator.selectedCreature!.killed) {
+        console.log("following selected");
+        controls.target.set(simulator.selectedCreature!.getXPosition()/1500*2*aspect-aspect+0.006 ,simulator.selectedCreature!.getYPosition()/1000*2-1+0.006, 0);
+        //camera.position.y = vec.y;
     }
+
     renderer.render( scene, camera );
 
 }
