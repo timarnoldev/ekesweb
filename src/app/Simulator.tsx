@@ -1,15 +1,7 @@
 import {EvolutionsSimulator} from "@/backend/EvolutionsSimulator";
 import React, {useEffect, useRef, useState} from "react";
 import {actormesh, animate, register, updateData} from "@/three/Rendering";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {Button} from "@/components/ui/button"
+
 import {PauseButton} from "@/components/pause-button";
 import {
     AlertDialog, AlertDialogAction, AlertDialogCancel,
@@ -38,6 +30,9 @@ import {ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent} from "@/
 import {Bar, BarChart, CartesianGrid, XAxis, YAxis} from "recharts"
 import Diagrams from "@/components/Diagrams";
 import {ConditionalRenderingDialog} from "@/components/ConditionalRenderingDialog";
+import {ThemeSelector} from "@/components/ThemeSelector";
+import {HelpDialog} from "@/components/HelpDialog";
+import {ParameterEditor} from "@/components/ParameterEditor";
 
 function BenchmarkUI(props: { open: boolean }) {
     return <AlertDialog open={props.open}>
@@ -63,6 +58,8 @@ function BenchmarkUI(props: { open: boolean }) {
     </AlertDialog>;
 }
 
+
+
 export default function Simulator() {
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -70,7 +67,6 @@ export default function Simulator() {
     const [isBenchmarkRunning, setIsBenchmarkRunning] = useState(true);
     const [intervalID, setIntervalID] = useState<NodeJS.Timeout | null>(null);
     const [selectedCreature, setSelectedCreature] = useState<Creature | null>(null);
-    const [followSelected, setFollowSelected] = useState(false);
     const [evoSim, setEvoSim] = useState<EvolutionsSimulator | null>(null);
 
     function toggleSimulation() {
@@ -86,9 +82,9 @@ export default function Simulator() {
 
     function startSimulation(simulator: EvolutionsSimulator) {
         let intervalID = setInterval(() => {
-            console.time();
+           // console.time();
             doSimulationStep(simulator);
-            console.timeEnd();
+            //console.timeEnd();
         }, 11);
 
         setIntervalID(intervalID);
@@ -127,7 +123,6 @@ export default function Simulator() {
 
     }, []);
 
-    const {setTheme} = useTheme()
 
     return (
         <>
@@ -139,36 +134,18 @@ export default function Simulator() {
                             <CardTitle>Simulation</CardTitle>
                             <CardDescription>Controls</CardDescription>
                             <div className="flex flex-row gap-2">
-                            <PauseButton toggle={toggleSimulation}/>
-                            <SingleStepButton onClick={()=>doSimulationStep(evoSim!)} disabled={intervalID!=null}></SingleStepButton>
+                                <PauseButton toggle={toggleSimulation}/>
+                                <SingleStepButton onClick={() => doSimulationStep(evoSim!)}
+                                                  disabled={intervalID != null}></SingleStepButton>
+                                <HelpDialog/>
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="outline" size="icon">
-                                        <SunIcon
-                                            className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"/>
-                                        <MoonIcon
-                                            className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"/>
-                                        <span className="sr-only">Toggle theme</span>
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                    <DropdownMenuItem onClick={() => setTheme("light")}>
-                                        Light
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => setTheme("dark")}>
-                                        Dark
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => setTheme("system")}>
-                                        System
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
 
                             <Diagrams evoSim={evoSim}></Diagrams>
-                            <ConditionalRenderingDialog/>
+                            <div className={"flex flex-row gap-2 items-center mt-4"}>
+                                <ThemeSelector/>
+                                <ConditionalRenderingDialog/></div>
 
                         </CardContent>
 
@@ -176,18 +153,26 @@ export default function Simulator() {
 
                 </div>
                 <div className="basis-2/4 overflow-hidden flex flex-col justify-start gap-2">
-                <Card className=" h-fit">
-                    <div className="h-full w-full p-2">
-                        <div className="h-full w-full rounded-md overflow-hidden">
-                            <canvas ref={canvasRef} className="w-full h-full "></canvas>
+                    <Card className=" h-fit">
+                        <div className="h-full w-full p-2">
+                            <div className="h-full w-full rounded-md overflow-hidden">
+                                <canvas ref={canvasRef} className="w-full h-full "></canvas>
+                            </div>
                         </div>
-                    </div>
-                </Card>
-                <Card className="flex flex-row w-full">
-                    <CreatureDetails creature={selectedCreature} selectionCallback={(creature)=>{setSelectedCreature(creature); evoSim!.selectedCreature = creature; if(creature==null) {evoSim!.followSelected = false;}}} evosim={evoSim} followCallback={()=>evoSim!.followSelected = true}></CreatureDetails>
-                </Card>
+                    </Card>
+                    <Card className="flex flex-row w-full">
+                        <CreatureDetails creature={selectedCreature} selectionCallback={(creature) => {
+                            setSelectedCreature(creature);
+                            evoSim!.selectedCreature = creature;
+                            if (creature == null) {
+                                evoSim!.followSelected = false;
+                            }
+                        }} evosim={evoSim} followCallback={() => evoSim!.followSelected = true}></CreatureDetails>
+                    </Card>
                 </div>
-                <div className="basis-1/4"></div>
+                <div className="basis-1/4">
+                    <ParameterEditor evosim={evoSim}></ParameterEditor>
+                </div>
             </div>
         </>
     );

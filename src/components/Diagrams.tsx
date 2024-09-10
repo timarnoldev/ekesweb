@@ -47,7 +47,6 @@ export default function Diagrams(props: {evoSim: EvolutionsSimulator | null}) {
 
             setGenerationArray(generation_array);
 
-            console.log(actorSizeArray.length);
             setActorSizeArray(actorsize => [...actorsize, {size: props.evoSim!.actorManager.getActors().length}]);
 
             //remote old entries if longer than 300

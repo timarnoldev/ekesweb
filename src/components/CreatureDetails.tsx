@@ -36,9 +36,9 @@ export function CreatureDetails(props: {
     if (!props.creature) {
         return <CardHeader className=" overflow-x-auto w-full" >
             <CardTitle>Creature Details</CardTitle>
-            <CardDescription className="gap-2 flex flex-col">Select a creature to get details by using one of the
-                buttons or click on a creature.<SelectionButtons selectionCallback={props.selectionCallback}
-                                                                 evoSim={props.evosim!}/></CardDescription>
+            <div className="gap-2 flex flex-col">Select a creature to get details by using one of the
+                buttons or by clicking on a creature.<SelectionButtons selectionCallback={props.selectionCallback}
+                                                                 evoSim={props.evosim!}/></div>
         </CardHeader>
     } else {
         return <CardHeader className="w-full ">
@@ -59,9 +59,8 @@ export function CreatureDetails(props: {
                 </ul>
 
                 <div className="flex w-full justify-end gap-2">
-                    <ToggleFollowSelected creature={props.creature} onPressedChange={()=>{props.followCallback()}}/>
-                    <ToggleInvincibility creature={props.creature}
-                                         onPressedChange={() => props.creature!.invincible = !props.creature!.invincible}/>
+                    {/*<ToggleFollowSelected creature={props.creature} onPressedChange={()=>{props.followCallback()}}/>*/}
+                    <ToggleInvincibility creature={props.creature}/>
 
 
                     <AddChilds creature={props.creature}/>
@@ -76,13 +75,14 @@ export function CreatureDetails(props: {
 
 }
 
-function ToggleInvincibility(props: { creature: Creature, onPressedChange: () => void }) {
+function ToggleInvincibility(props: { creature: Creature }) {
+    const [pressed, setPressed] = useState(props.creature.invincible);
     return <TooltipProvider>
         <Tooltip>
             <TooltipTrigger>
-                <Toggle variant="default" disabled={props.creature.killed} className="data-[state=on]:bg-green-400"
+                <Toggle pressed={pressed} variant="default" disabled={props.creature.killed} className="data-[state=on]:bg-green-400"
                         aria-label="Toggle"
-                        onPressedChange={props.onPressedChange}>
+                        onPressedChange={(pressed)=>{setPressed(pressed); props.creature.invincible = pressed; doSimulationStep(props.creature!.es!);}}>
                     <ShieldCheck className="h-4 w-4"/>
                 </Toggle></TooltipTrigger>
             <TooltipContent>

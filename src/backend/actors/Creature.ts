@@ -13,19 +13,7 @@ import {EvolutionsSimulator} from "@/backend/EvolutionsSimulator";
 export class Creature extends Actor {
     public brain: NeuronalNetwork;
     public feelers: Feeler[] = [];
-    private moveFactor: number = Variables.moveFactor;
-    private rotateFactor: number = Variables.rotateFactor;
-    private moveCostMult: number = Variables.moveCostMult;
-    private rotateCostMult: number = Variables.rotateCostMult;
-    private eatMult: number = Variables.eatMult;
-    private permanentCostLand: number = Variables.permanentCostLand;
-    private permanentCostWater: number = Variables.permanentCostWater;
-    private eatCostMult: number = Variables.eatCostMult;
-    private createChildAge: number = Variables.createChildAge;
-    private createChildEnergy: number = Variables.createChildEnergy;
-    private eatAdmission: number = Variables.eatAdmission;
-    private mutation_percentage: number = Variables.mutation_percentage;
-    private mutation_neurons: number = Variables.mutation_neurons;
+
     private costMult: number = 1;
     private feelerLength: number = 15;
     public energy: number = 200;
@@ -51,9 +39,8 @@ export class Creature extends Actor {
         this.rotationAngle = Math.random() * Math.PI * 2;
         this.brain = new NeuronalNetwork();
         this.brain.createInputNeurons(3 + this.feelers.length * 2);
-        this.brain.addHiddenLayer(40);
-        this.brain.addHiddenLayer(40);
-        this.brain.addHiddenLayer(40);
+        this.brain.addHiddenLayer(25);
+        this.brain.addHiddenLayer(25);
         this.brain.createOutputNeurons(5);
         this.brain.connectRandomFullMeshed();
         this.brain.addBiasForAllNeurons();
@@ -73,8 +60,8 @@ export class Creature extends Actor {
             manipulateHiddenNeurons = Math.random() >= 0.5 ? 1 : -1;
         }
         this.brain = parent.brain.cloneFullMeshed(manipulateHiddenNeurons);
-        for (let i = 0; i < this.mutation_neurons; i++) {
-            this.brain.randomMutate(this.mutation_percentage);
+        for (let i = 0; i < Variables.mutation_neurons; i++) {
+            this.brain.randomMutate(Variables.mutation_percentage);
         }
         this.isRandom = false;
         this.generation = parent.generation + 1;
@@ -117,11 +104,11 @@ export class Creature extends Actor {
             this.createChild();
         }
         if (this.es!.world.getTileFromActorPosition(this.getXPosition(), this.getYPosition()).getLandType() === LandType.LAND) {
-            this.costMult = this.permanentCostLand;
+            this.costMult = Variables.permanentCostLand;
         } else {
-            this.costMult = this.permanentCostWater;
+            this.costMult = Variables.permanentCostWater;
         }
-        this.energy -= this.permanentCostLand * this.costMult;
+        this.energy -= Variables.permanentCostLand * this.costMult;
         this.costMult += this.age * 0.1//* 1/(this.childrenCount+1); //TODO experimental change
         if (this.energy < 100) {
             this.kill();
@@ -129,11 +116,11 @@ export class Creature extends Actor {
     }
 
     public createChild(): void {
-        if (this.energy >= this.createChildEnergy && this.age >= this.createChildAge) {
+        if (this.energy >= Variables.createChildEnergy && this.age >= Variables.createChildAge) {
             const child = new Creature();
             child.generateFromParent(this);
             this.es!.actorManager.getActors().push(child);
-            this.energy -= this.createChildEnergy / 2 * this.costMult;
+            this.energy -= Variables.createChildEnergy / 2 * this.costMult;
             this.childrenCount++;
         }/*else{
             this.energy -= this.createChildEnergy / 4 * this.costMult;
@@ -154,29 +141,29 @@ export class Creature extends Actor {
     public eat(): void {
         const t = this.es!.getWorld().getTileFromActorPosition(this.getXPosition(), this.getYPosition());
         if (this.es!.getWorld().getTileFromActorPosition(this.getXPosition(), this.getYPosition()).getLandType() === LandType.LAND) {
-            let eaten = this.outEat * this.eatAdmission;
+            let eaten = this.outEat * Variables.eatAdmission;
             if (this.es!.getWorld().getTileFromActorPosition(this.getXPosition(), this.getYPosition()).getFoodValue() < eaten) {
                 eaten += this.es!.getWorld().getTileFromActorPosition(this.getXPosition(), this.getYPosition()).getFoodValue() - eaten;
             }
-            this.energy += eaten * this.eatMult;
+            this.energy += eaten * Variables.eatMult;
             t.setFoodValue(t.getFoodValue() - eaten);
         }
-        this.energy -= this.outEat * this.eatCostMult * this.costMult;
+        this.energy -= this.outEat * Variables.eatCostMult * this.costMult;
     }
 
     public Rotate(): void {
         const rotate = this.outRotateLeft - this.outRotateRight;
         if (Math.abs(rotate) > 0.3) {
-            this.rotationAngle += rotate * this.rotateFactor;
-            this.energy -= Math.abs(rotate) * this.rotateCostMult * this.costMult;
+            this.rotationAngle += rotate * Variables.rotateFactor;
+            this.energy -= Math.abs(rotate) * Variables.rotateCostMult * this.costMult;
         }
     }
 
     public moveForward(): void {
-        this.XPosition += Math.cos(this.rotationAngle) * this.moveFactor * this.outMoveForward;
-        this.YPosition += Math.sin(this.rotationAngle) * this.moveFactor * this.outMoveForward;
-        this.distanceMoved += Math.sqrt(Math.pow(Math.cos(this.rotationAngle) * this.moveFactor * this.outMoveForward, 2) + Math.pow(Math.sin(this.rotationAngle) * this.moveFactor * this.outMoveForward, 2));
-        this.energy -= this.outMoveForward * this.moveCostMult * this.costMult;
+        this.XPosition += Math.cos(this.rotationAngle) * Variables.moveFactor * this.outMoveForward;
+        this.YPosition += Math.sin(this.rotationAngle) * Variables.moveFactor * this.outMoveForward;
+        this.distanceMoved += Math.sqrt(Math.pow(Math.cos(this.rotationAngle) *Variables.moveFactor * this.outMoveForward, 2) + Math.pow(Math.sin(this.rotationAngle) * Variables.moveFactor * this.outMoveForward, 2));
+        this.energy -= this.outMoveForward * Variables.moveCostMult * this.costMult;
     }
 
     public getAge(): number {
@@ -191,101 +178,7 @@ export class Creature extends Actor {
         this.feelerLength = feelerLength;
     }
 
-    public getMoveFactor(): number {
-        return this.moveFactor;
-    }
 
-    public setMoveFactor(moveFactor: number): void {
-        this.moveFactor = moveFactor;
-    }
-
-    public getRotateFactor(): number {
-        return this.rotateFactor;
-    }
-
-    public setRotateFactor(rotateFactor: number): void {
-        this.rotateFactor = rotateFactor;
-    }
-
-    public getMoveCostMult(): number {
-        return this.moveCostMult;
-    }
-
-    public setMoveCostMult(moveCostMult: number): void {
-        this.moveCostMult = moveCostMult;
-    }
-
-    public getRotateCostMult(): number {
-        return this.rotateCostMult;
-    }
-
-    public setRotateCostMult(rotateCostMult: number): void {
-        this.rotateCostMult = rotateCostMult;
-    }
-
-    public getEatMult(): number {
-        return this.eatMult;
-    }
-
-    public setEatMult(eatMult: number): void {
-        this.eatMult = eatMult;
-    }
-
-    public getPermanentCostLand(): number {
-        return this.permanentCostLand;
-    }
-
-    public setPermanentCostLand(permanentCostLand: number): void {
-        this.permanentCostLand = permanentCostLand;
-    }
-
-    public getPermanentCostWater(): number {
-        return this.permanentCostWater;
-    }
-
-    public setPermanentCostWater(permanentCostWater: number): void {
-        this.permanentCostWater = permanentCostWater;
-    }
-
-    public getEatCostMult(): number {
-        return this.eatCostMult;
-    }
-
-    public setEatCostMult(eatCostMult: number): void {
-        this.eatCostMult = eatCostMult;
-    }
-
-    public getCreateChildAge(): number {
-        return this.createChildAge;
-    }
-
-    public setCreateChildAge(createChildAge: number): void {
-        this.createChildAge = createChildAge;
-    }
-
-    public getCreateChildEnergy(): number {
-        return this.createChildEnergy;
-    }
-
-    public setCreateChildEnergy(createChildEnergy: number): void {
-        this.createChildEnergy = createChildEnergy;
-    }
-
-    public getEatAdmission(): number {
-        return this.eatAdmission;
-    }
-
-    public setEatAdmission(eatAdmission: number): void {
-        this.eatAdmission = eatAdmission;
-    }
-
-    public setMutation_percentage(mutation_percentage: number): void {
-        this.mutation_percentage = mutation_percentage;
-    }
-
-    public setMutation_neurons(mutation_neurons: number): void {
-        this.mutation_neurons = mutation_neurons;
-    }
 
     public getBrain(): NeuronalNetwork {
         return this.brain;

@@ -4,6 +4,9 @@ import { Actor } from './actors/Actor';
 import { Creature } from './actors/Creature';
 import { EvolutionsSimulator } from './EvolutionsSimulator';
 import { AverageElement } from './AverageElement';
+import {conditionalRendering, onTheFlyModification} from "@/lib/utils";
+import {gen_color_table} from "@/backend/utils/ColorUtils";
+import {actormesh, aspect, selectedCreatureMesh} from "@/three/Rendering";
 
 export class ActorManager {
     public static positions: number[][] = [[737, 491], [990, 670], [250, 670], [400, 290], [1300, 230], [1100, 700]];
@@ -45,6 +48,13 @@ export class ActorManager {
 
         for (let i = 0; i < this.actors.length; i++) {
             const actor = this.actors[i];
+
+            try {
+                (eval(onTheFlyModification)(actor));
+            }catch (e:any) {
+                document.dispatchEvent(new CustomEvent("OnTheFlyModificationError", {detail: e.toString()}));
+            }
+
             actor.doStep();
             if (actor.killed) {
                 calcAgeOnDeathAverage += actor.age;

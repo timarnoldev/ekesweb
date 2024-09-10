@@ -11,12 +11,12 @@ import {Editor, useMonaco} from "@monaco-editor/react";
 import {Button} from "@/components/ui/button";
 import {useEffect, useState} from "react";
 import {editor} from "monaco-editor";
-import {conditionalRendering, setConditionalRendering} from "@/lib/utils";
-import {Split, X} from "lucide-react";
-export function ConditionalRenderingDialog() {
+import {conditionalRendering, setConditionalRendering, setOnTheFlyModification} from "@/lib/utils";
+import {ChartCandlestick, Split, X} from "lucide-react";
+export function OnTheFlyModificationDialog() {
 
-    let defaultRendering = `(creature:Creature):boolean => {
-    return true;
+    let defaultRendering = `(creature:Creature):void => {
+    
 }`
 
     const [program, setProgram] = useState<string>(defaultRendering);
@@ -24,21 +24,21 @@ export function ConditionalRenderingDialog() {
 
     let language_definition = `
     declare class Creature {
-    public readonly energy: number = 200;
-    public readonly rotationAngle: number = 0;
-    public readonly outMoveForward: number = 0;
-    public readonly outRotateRight: number = 0;
-    public readonly outRotateLeft: number = 0;
-    public readonly outEat: number = 0;
-    public readonly childrenCount: number = 0;
-    public readonly distanceMoved: number = 0;
-    public readonly XPosition: number = 0;
-    public readonly YPosition: number = 0;
-    public readonly age: number = 0;
-    public readonly killed: boolean = false;
-    public readonly isRandom: boolean = false;
-    public readonly generation: number = 1;
-    public readonly invincible: boolean = false;
+        public energy: number = 200;
+    public rotationAngle: number = 0;
+    public outMoveForward: number = 0;
+    public outRotateRight: number = 0;
+    public outRotateLeft: number = 0;
+    public outEat: number = 0;
+    public childrenCount: number = 0;
+    public distanceMoved: number = 0;
+    public XPosition: number = 0;
+    public YPosition: number = 0;
+    public age: number = 0;
+    public killed: boolean = false;
+    public isRandom: boolean = false;
+    public generation: number = 1;
+    public invincible: boolean = false;
     }
   
        
@@ -49,7 +49,7 @@ export function ConditionalRenderingDialog() {
     useEffect(() => {
 
         if (monaco) {
-            let libUri = "ts:filename/facts.d.ts";
+            let libUri = "ts:filename/creaturemods.d.ts";
             monaco.languages.typescript.javascriptDefaults.addExtraLib(language_definition, libUri);
 
             monaco.editor.createModel(language_definition, "typescript", monaco.Uri.parse(libUri));
@@ -59,10 +59,10 @@ export function ConditionalRenderingDialog() {
             setLastError((e as CustomEvent).detail);
         };
 
-        document.addEventListener("conditionalRenderingError", errorEventListener);
+        document.addEventListener("OnTheFlyModificationError", errorEventListener);
 
         return () => {
-            document.removeEventListener("conditionalRenderingError", errorEventListener);
+            document.removeEventListener("OnTheFlyModificationError", errorEventListener);
         }
     }, [monaco]);
 
@@ -81,9 +81,8 @@ export function ConditionalRenderingDialog() {
                     worker(model.uri).then(async (client) => {
                         let result = await client.getEmitOutput(model.uri.toString());
                         console.log(result.outputFiles[0].text);
-                        setConditionalRendering(result.outputFiles[0].text)
+                        setOnTheFlyModification(result.outputFiles[0].text)
                         model.dispose();
-
                     });
                 });
             }
@@ -93,13 +92,13 @@ export function ConditionalRenderingDialog() {
     }
 
     return <Dialog>
-        <DialogTrigger asChild className=""><Button className={"flex flex-row gap-2"}><Split /> Conditional Rendering</Button></DialogTrigger>
+        <DialogTrigger asChild  className=""><Button className={"flex flex-row gap-2"}><ChartCandlestick /> OnTheFly Modifications</Button></DialogTrigger>
         <DialogContent className={"w-1/3"}>
             <DialogHeader>
-                <DialogTitle>Conditional Rendering</DialogTitle>
+                <DialogTitle>OnTheFly Modification</DialogTitle>
                 <DialogDescription>
-                    The following function will be evaluated for each actor. If it returns true, the actor will be rendered.
-                    In case your code throws an error, the actor will not be rendered.
+                    The following function will be evaluated for each actor on a simulation step. You can perform modifications to the actor here.
+                    In case your code throws an error, the loop continues without applying the modification.
                 </DialogDescription>
             </DialogHeader>
             <DialogBody>

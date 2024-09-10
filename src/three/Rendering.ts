@@ -36,7 +36,7 @@ export function register(canvas:HTMLCanvasElement, setSelectedCreature:(creature
 
     camera.position.z = 5;
     controls = new MapControls( camera, renderer.domElement );
-    controls.enableRotate = true;
+    controls.enableRotate = false;
     controls.screenSpacePanning = true;
     controls.dampingFactor = 0.05;
 
@@ -171,6 +171,7 @@ export function updateData(evosim:EvolutionsSimulator) {
                     if(currentActor === evosim.selectedCreature) {
                         actormatrix.setPosition(currentActor.getXPosition()/1500*2*aspect-aspect+0.006 ,currentActor.getYPosition()/1000*2-1+0.006,1.3);
                         selectedCreatureMesh.position.set(currentActor.getXPosition()/1500*2*aspect-aspect+0.006 ,currentActor.getYPosition()/1000*2-1+0.006,1.2);
+                        actormesh.setColorAt(i, color.setHex(gen_color_table[currentActor.getGeneration() % 15]));
                     }else{
                         actormatrix.setPosition(currentActor.getXPosition()/1500*2*aspect-aspect+0.006 ,currentActor.getYPosition()/1000*2-1+0.006,1.1);
                         actormesh.setColorAt(i, color.setHex(gen_color_table[currentActor.getGeneration() % 15]));
