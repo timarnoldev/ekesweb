@@ -131,7 +131,8 @@ export default function Simulator() {
                 <div className="basis-1/4 ">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Simulation</CardTitle>
+                            <CardTitle>EKES Evolution Simulation</CardTitle>
+                            <div className={"mt-4"}/>
                             <CardDescription>Controls</CardDescription>
                             <div className="flex flex-row gap-2">
                                 <PauseButton toggle={toggleSimulation}/>
