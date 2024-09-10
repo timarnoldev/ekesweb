@@ -124,7 +124,7 @@ export default function Simulator() {
             <BenchmarkUI open={isBenchmarkRunning}></BenchmarkUI>
             <div className="flex flex-row h-svh gap-2 m-2">
                 <div className="basis-1/4 ">
-                    <Card className={"max-h-[90%] h-fit overflow-y-scroll"}>
+                    <Card className={"max-h-[95%] h-fit overflow-y-scroll"}>
                         <CardHeader>
                             <CardTitle>EKES Evolution Simulation</CardTitle>
                             <div className={"mt-4"}/>

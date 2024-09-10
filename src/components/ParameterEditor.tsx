@@ -69,7 +69,7 @@ export function ParameterEditor(props: { evosim: EvolutionsSimulator | null }) {
 
     }
 
-    return <Card className={"max-h-[90%] h-fit overflow-y-scroll"}>
+    return <Card className={"max-h-[95%] h-fit overflow-y-scroll"}>
         <CardHeader >
             <CardTitle>Simulation Parameters</CardTitle>
 
