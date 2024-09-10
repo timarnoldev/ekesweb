@@ -18,15 +18,10 @@ export class WorldGenerator {
     }
 
     public async readImage(path: string): Promise<void> {
-        try {
             const img = new Image();
             img.src = path;
             await img.decode();
             this.ctx.drawImage(img, 0, 0, this.imageWidth, this.imageHeight);
-        } catch (e:any) {
-            // Use fallback image
-           e.printStackTrace();
-        }
     }
 
     public async generateWorld(vtw: VirtualTileWorld): Promise<void> {

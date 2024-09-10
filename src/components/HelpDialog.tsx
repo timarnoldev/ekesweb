@@ -35,8 +35,8 @@ export function HelpDialog() {
                     <div className="mt-2"/>
                     The project originates from the <a aria-label="Jugend forscht"
                                                        href="https://www.jugend-forscht-bayern.de/aktuelles-allgemeines/detail/landeswettbewerb-preistraeger/#:~:text=EKES%20%2D%20Einfache%20KI%2Dbasierte%20Evolutions%2DSimulation"
-                                                       target="_blank" className="underline text-lime-950">"Jugend
-                    forscht" competition</a> which received
+                                                       target="_blank" className="underline text-lime-950">Jugend
+                    forscht competition</a> which received
                     state-wide recognition in 2021.
 
                     <div className="mt-2"/>

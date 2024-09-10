@@ -1,5 +1,5 @@
 import {EvolutionsSimulator} from "@/backend/EvolutionsSimulator";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 
 import React, {useState} from "react";
 import {Variables} from "@/backend/Variables";
@@ -22,7 +22,6 @@ export function ParameterEditor(props: { evosim: EvolutionsSimulator | null }) {
     const [eatAdmission, setEatAdmission] = useState(Variables.eatAdmission);
     const [mutation_percentage, setMutation_percentage] = useState(Variables.mutation_percentage);
     const [mutation_neurons, setMutation_neurons] = useState(Variables.mutation_neurons);
-    const [render, rerender] = useState(false);
 
     function apply() {
         Variables.moveFactor = moveFactor;
@@ -58,7 +57,7 @@ export function ParameterEditor(props: { evosim: EvolutionsSimulator | null }) {
         setMutation_neurons(Variables.mutation_neurons);
     }
 
-    let variables: string[] = [];
+    const variables: string[] = [];
     if (props.evosim) {
         //iterate over all variables and create a input field for each
         //  Variables.
@@ -70,7 +69,7 @@ export function ParameterEditor(props: { evosim: EvolutionsSimulator | null }) {
 
     }
 
-    return <Card>
+    return <Card className={"max-h-[90%] h-fit overflow-y-scroll"}>
         <CardHeader >
             <CardTitle>Simulation Parameters</CardTitle>
 

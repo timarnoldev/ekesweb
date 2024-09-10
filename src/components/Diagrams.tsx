@@ -31,9 +31,9 @@ export default function Diagrams(props: {evoSim: EvolutionsSimulator | null}) {
     } satisfies ChartConfig
 
     useEffect(() => {
-        let listener = () => {
+        const listener = () => {
             if (!props.evoSim) return
-            let actors_per_generation = props.evoSim.actorManager.getActors().filter((actor) => actor instanceof Creature).map((actor) => actor as Creature).reduce((acc, creature) => {
+            const actors_per_generation = props.evoSim.actorManager.getActors().filter((actor) => actor instanceof Creature).map((actor) => actor as Creature).reduce((acc, creature) => {
                 if (!acc[creature.generation]) {
                     acc[creature.generation] = 0;
                 }
@@ -41,7 +41,7 @@ export default function Diagrams(props: {evoSim: EvolutionsSimulator | null}) {
                 return acc;
             }, {} as { [key: number]: number });
 
-            let generation_array = Object.entries(actors_per_generation).map(([key, value]) => {
+            const generation_array = Object.entries(actors_per_generation).map(([key, value]) => {
                 return {"gen": key, "count": value};
             });
 
@@ -54,7 +54,7 @@ export default function Diagrams(props: {evoSim: EvolutionsSimulator | null}) {
                 setActorSizeArray(actorSizeArray.slice(1));
             }
 
-           let fooddata = (props.evoSim!.world.getFoodAvailable());
+           const fooddata = (props.evoSim!.world.getFoodAvailable());
 
             setFoodAvailable(food => [...food, {amount: fooddata}]);
             if(foodAvailable.length>500) {

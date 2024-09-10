@@ -1,14 +1,13 @@
 import {EvolutionsSimulator} from "@/backend/EvolutionsSimulator";
 import React, {useEffect, useRef, useState} from "react";
-import {actormesh, animate, register, updateData} from "@/three/Rendering";
+import {animate, register} from "@/three/Rendering";
 
 import {PauseButton} from "@/components/pause-button";
 import {
-    AlertDialog, AlertDialogAction, AlertDialogCancel,
+    AlertDialog,
     AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
     AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger
+    AlertDialogTitle
 } from "@/components/ui/alert-dialog";
 import {LoadingSpinner} from "@/components/ui/LoadingSpinner";
 
@@ -16,18 +15,14 @@ import {
     Card,
     CardContent,
     CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import {MoonIcon, SunIcon} from "lucide-react";
-import {useTheme} from "next-themes";
+
 import {Creature} from "@/backend/actors/Creature";
 import {CreatureDetails} from "@/components/CreatureDetails";
 import {doSimulationStep} from "@/lib/SimulationControler";
 import {SingleStepButton} from "@/components/SingleStepButton";
-import {ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart";
-import {Bar, BarChart, CartesianGrid, XAxis, YAxis} from "recharts"
 import Diagrams from "@/components/Diagrams";
 import {ConditionalRenderingDialog} from "@/components/ConditionalRenderingDialog";
 import {ThemeSelector} from "@/components/ThemeSelector";
@@ -81,7 +76,7 @@ export default function Simulator() {
 
 
     function startSimulation(simulator: EvolutionsSimulator) {
-        let intervalID = setInterval(() => {
+        const intervalID = setInterval(() => {
            // console.time();
             doSimulationStep(simulator);
             //console.timeEnd();
@@ -91,7 +86,7 @@ export default function Simulator() {
     }
 
     function registerSimulation():EvolutionsSimulator {
-        let evosim: EvolutionsSimulator = new EvolutionsSimulator();
+        const evosim: EvolutionsSimulator = new EvolutionsSimulator();
 
         setEvoSim(evosim);
         register(canvasRef.current!, setSelectedCreature, evosim);
@@ -112,10 +107,10 @@ export default function Simulator() {
 
         const worker = new Worker(new URL("@/backend/Benchmark", import.meta.url), {type: 'module'});
         worker.onmessage = (event) => {
-            let data = event.data;
+            const data = event.data;
             console.log(data);
             setIsBenchmarkRunning(false);
-            let simulator = registerSimulation();
+            const simulator = registerSimulation();
 
             startSimulation(simulator);
         };
@@ -129,7 +124,7 @@ export default function Simulator() {
             <BenchmarkUI open={isBenchmarkRunning}></BenchmarkUI>
             <div className="flex flex-row h-svh gap-2 m-2">
                 <div className="basis-1/4 ">
-                    <Card>
+                    <Card className={"max-h-[90%] h-fit overflow-y-scroll"}>
                         <CardHeader>
                             <CardTitle>EKES Evolution Simulation</CardTitle>
                             <div className={"mt-4"}/>

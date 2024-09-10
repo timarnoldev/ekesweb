@@ -10,19 +10,18 @@ import {DialogBody} from "next/dist/client/components/react-dev-overlay/internal
 import {Editor, useMonaco} from "@monaco-editor/react";
 import {Button} from "@/components/ui/button";
 import {useEffect, useState} from "react";
-import {editor} from "monaco-editor";
-import {conditionalRendering, setConditionalRendering, setOnTheFlyModification} from "@/lib/utils";
-import {ChartCandlestick, Split, X} from "lucide-react";
+import { setOnTheFlyModification} from "@/lib/utils";
+import {ChartCandlestick, X} from "lucide-react";
 export function OnTheFlyModificationDialog() {
 
-    let defaultRendering = `(creature:Creature):void => {
+    const defaultRendering = `(creature:Creature):void => {
     
 }`
 
     const [program, setProgram] = useState<string>(defaultRendering);
     const [lastError, setLastError] = useState<string | null>(null);
 
-    let language_definition = `
+    const language_definition = `
     declare class Creature {
         public energy: number = 200;
     public rotationAngle: number = 0;
@@ -49,13 +48,13 @@ export function OnTheFlyModificationDialog() {
     useEffect(() => {
 
         if (monaco) {
-            let libUri = "ts:filename/creaturemods.d.ts";
+            const libUri = "ts:filename/creaturemods.d.ts";
             monaco.languages.typescript.javascriptDefaults.addExtraLib(language_definition, libUri);
 
             monaco.editor.createModel(language_definition, "typescript", monaco.Uri.parse(libUri));
         }
 
-        let errorEventListener = (e:Event) => {
+        const errorEventListener = (e:Event) => {
             setLastError((e as CustomEvent).detail);
         };
 
@@ -64,9 +63,9 @@ export function OnTheFlyModificationDialog() {
         return () => {
             document.removeEventListener("OnTheFlyModificationError", errorEventListener);
         }
-    }, [monaco]);
+    }, [monaco,language_definition]);
 
-    function handleEditorChange(value: string | undefined, ev: editor.IModelContentChangedEvent) {
+    function handleEditorChange(value: string | undefined) {
         setProgram(value!);
     }
 
@@ -79,7 +78,7 @@ export function OnTheFlyModificationDialog() {
 
                 monaco!.languages.typescript.getTypeScriptWorker().then(async (worker) => {
                     worker(model.uri).then(async (client) => {
-                        let result = await client.getEmitOutput(model.uri.toString());
+                        const result = await client.getEmitOutput(model.uri.toString());
                         console.log(result.outputFiles[0].text);
                         setOnTheFlyModification(result.outputFiles[0].text)
                         model.dispose();

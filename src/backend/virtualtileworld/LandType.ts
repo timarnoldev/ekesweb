@@ -1,6 +1,6 @@
 "use client";
 export enum LandType {
-    NONE = 0,
+    NONE = -1,
     LAND = 0,
     WATER = 1
 }

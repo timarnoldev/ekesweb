@@ -4,7 +4,6 @@ import { Variables } from '@/backend/Variables';
 import { Actor } from '@/backend/actors/Actor';
 
 import { LandType } from '@/backend/virtualtileworld/LandType';
-import { Tile } from '@/backend/virtualtileworld/Tile';
 import { Feeler } from '@/backend/actors/Feeler';
 import {NeuronalNetwork} from "@/backend/ai/NeuralNetwork";
 import {Sigmoid} from "@/backend/ai/sigmoid";

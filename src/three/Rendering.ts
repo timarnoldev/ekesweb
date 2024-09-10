@@ -1,6 +1,6 @@
 "use client";
 import * as THREE from 'three';
-import {WebGLRenderer, Scene, InstancedMesh, Camera, MeshBasicMaterial, Mesh} from "three";
+import {WebGLRenderer, Scene, InstancedMesh, Camera} from "three";
 import { MapControls } from 'three/addons/controls/MapControls.js';
 import {EvolutionsSimulator} from "@/backend/EvolutionsSimulator";
 import {LandType} from "@/backend/virtualtileworld/LandType";
@@ -19,7 +19,7 @@ export let selectedCreatureMesh:THREE.Mesh;
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2( 1, 1 );
 
-export let aspect = 1.5;
+export const aspect = 1.5;
 
 const color = new THREE.Color();
 const matrix = new THREE.Matrix4();
@@ -41,14 +41,14 @@ export function register(canvas:HTMLCanvasElement, setSelectedCreature:(creature
     controls.dampingFactor = 0.05;
 
     //calculate height to fit aspect ratio of 1,5
-    let newheight = canvas.clientWidth/1.5;
+    const newheight = canvas.clientWidth/1.5;
     renderer.setSize( canvas.clientWidth, newheight);
 
-    var material = new THREE.MeshBasicMaterial( { color: 0xFFFFFF } );
+    const material = new THREE.MeshBasicMaterial( { color: 0xFFFFFF } );
     const geometry = new THREE.PlaneGeometry((aspect*2)/150,2/100,1); //0.045,50
     worldmesh = new THREE.InstancedMesh( geometry, material, 15000 );
 
-    var actormaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFFF } );
+    const actormaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFFF } );
     const actorgeometry = new THREE.CircleGeometry( 0.012 );
 
     const actorgeometrySelected = new THREE.CircleGeometry( 0.03 );
@@ -62,10 +62,10 @@ export function register(canvas:HTMLCanvasElement, setSelectedCreature:(creature
 
    // actormesh.instanceMatrix.setUsage( THREE.DynamicDrawUsage );
 
-    var i=0;
-    for(var x=0;x<150;x++) {
+    let i=0;
+    for(let x=0;x<150;x++) {
 
-        for(var y=0;y<100;y++) {
+        for(let y=0;y<100;y++) {
 
             // worldtils[x][y] = new THREE.Mesh( geometry, material );
             matrix.setPosition((x*aspect*2/150)+(aspect*2)/150-aspect,(y*2/100)+2/100-1,1);
@@ -84,7 +84,7 @@ export function register(canvas:HTMLCanvasElement, setSelectedCreature:(creature
         }
     }
 
-    for(var z=0;z<1200;z++) {
+    for(let z=0;z<1200;z++) {
 
         matrix.setPosition( 100,100, 1);
 
@@ -100,7 +100,7 @@ export function register(canvas:HTMLCanvasElement, setSelectedCreature:(creature
 
 
     window.addEventListener("resize", () => {
-        let newheight = canvas.parentElement!.clientWidth/1.5;
+        const newheight = canvas.parentElement!.clientWidth/1.5;
         camera.updateMatrix();
         renderer.setSize( canvas.parentElement!.clientWidth, newheight);
         canvas.width = canvas.parentElement!.clientWidth;
@@ -112,7 +112,7 @@ export function register(canvas:HTMLCanvasElement, setSelectedCreature:(creature
 
     canvas.addEventListener("click", (event) => {
         event.preventDefault();
-        let rect = canvas.getBoundingClientRect();
+        const rect = canvas.getBoundingClientRect();
         mouse.x = ( ( event.clientX - rect.left ) / ( rect. right - rect.left ) ) * 2 - 1;
         mouse.y = - ( ( event.clientY - rect.top ) / ( rect.bottom - rect.top) ) * 2 + 1;
         raycaster.setFromCamera(mouse, camera);
@@ -123,8 +123,7 @@ export function register(canvas:HTMLCanvasElement, setSelectedCreature:(creature
             const instanceId = intersection[ 0 ].instanceId;
 
            // actormesh.setColorAt( instanceId!, color.setHex( 0xffffff ) );
-           let creature = evosim.getActorManager().getActors()[instanceId!] as Creature;
-           selectedInstanceID = instanceId!;
+           const creature = evosim.getActorManager().getActors()[instanceId!] as Creature;
            evosim.selectedCreature = creature;
            setSelectedCreature(creature);
 
@@ -140,15 +139,12 @@ export function register(canvas:HTMLCanvasElement, setSelectedCreature:(creature
 
 }
 const actormatrix = new THREE.Matrix4();
-let selectedInstanceID = -1;
-let simulator:EvolutionsSimulator;
 
 export function updateData(evosim:EvolutionsSimulator) {
-    simulator = evosim;
     let i =0;
     for(let x=0;x<evosim.getWorld().getWidth();x++) {
         for(let y=0;y<evosim.getWorld().getHeight();y++) {
-            let tile = evosim.getWorld().getTile(x,y);
+            const tile = evosim.getWorld().getTile(x,y);
             if(tile.getLandType()===LandType.WATER) {
                 worldmesh.setColorAt(i,color.setHex(0x14002b));
             }else{
@@ -164,7 +160,7 @@ export function updateData(evosim:EvolutionsSimulator) {
 
     for(let i=0;i<1200;i++) {
         if(i < evosim.getActorManager().getActors().length) {
-            let currentActor = evosim.getActorManager().getActors()[i];
+            const currentActor = evosim.getActorManager().getActors()[i];
 
             try {
                 if((eval(conditionalRendering)(currentActor))) {
@@ -182,8 +178,8 @@ export function updateData(evosim:EvolutionsSimulator) {
                     actormatrix.setPosition(100,100, 1);
                     actormesh.setMatrixAt(i,actormatrix);
                 }
-            }catch (e:any) {
-                document.dispatchEvent(new CustomEvent("conditionalRenderingError", {detail: e.toString()}));
+            }catch (e:unknown) {
+                document.dispatchEvent(new CustomEvent("conditionalRenderingError", {detail: e!.toString()}));
 
                 console.error("Error in conditional rendering: "+e);
                 actormatrix.setPosition(100,100, 1);

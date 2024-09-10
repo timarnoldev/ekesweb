@@ -293,8 +293,8 @@ export class NeuronalNetwork {
                     if (i1 <= network.hiddenNeurons[i].length - 1 && network.hiddenNeurons[i][i1].getInputConnections().length - 1 >= i2) {
                         try {
                             network.hiddenNeurons[i][i1].getInputConnections()[i2].setWeight(this.hiddenNeurons[i][i1].getInputConnections()[i2].getWeight());
-                        } catch (e: any) {
-                            e.printStackTrace();
+                        } catch (e:unknown) {
+                            //e.printStackTrace();
                         }
                     }
                 }

@@ -1,5 +1,5 @@
 import {Creature} from "@/backend/actors/Creature";
-import {CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
+import {CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {useEffect, useState} from "react";
 import KillButton from "@/components/KillButton";
 import {Button} from "@/components/ui/button";
@@ -22,7 +22,7 @@ export function CreatureDetails(props: {
 
 
     useEffect(() => {
-        let listener = () => {
+        const listener = () => {
             rerender(!render);
         };
         document.addEventListener("simulationUpdate", listener);
@@ -91,7 +91,7 @@ function ToggleInvincibility(props: { creature: Creature }) {
         </Tooltip>
     </TooltipProvider>;
 }
-
+/*
 function ToggleFollowSelected(props: { creature: Creature, onPressedChange: () => void }) {
     return <TooltipProvider>
         <Tooltip>
@@ -107,6 +107,8 @@ function ToggleFollowSelected(props: { creature: Creature, onPressedChange: () =
         </Tooltip>
     </TooltipProvider>;
 }
+
+ */
 
 function AddEnergy(props: { creature: Creature }) {
     return <Button className="flex flex-row gap-2" onClick={() => {
@@ -145,28 +147,28 @@ function SelectionButtons(props: {
 },) {
 
     function selectOldest() {
-        let oldest = props.evoSim.actorManager.getActors().filter((actor) => actor instanceof Creature).reduce((prev, current) => {
+        const oldest = props.evoSim.actorManager.getActors().filter((actor) => actor instanceof Creature).reduce((prev, current) => {
             return (prev.age > current.age) ? prev : current
         }) as Creature;
         props.selectionCallback(oldest);
     }
 
     function selectYoungest() {
-        let youngest = props.evoSim.actorManager.getActors().filter((actor) => actor instanceof Creature).reduce((prev, current) => {
+        const youngest = props.evoSim.actorManager.getActors().filter((actor) => actor instanceof Creature).reduce((prev, current) => {
             return (prev.age < current.age) ? prev : current
         }) as Creature;
         props.selectionCallback(youngest);
     }
 
     function selectWithMostChildren() {
-        let mostChildren = props.evoSim.actorManager.getActors().filter((actor) => actor instanceof Creature).reduce((prev, current) => {
+        const mostChildren = props.evoSim.actorManager.getActors().filter((actor) => actor instanceof Creature).reduce((prev, current) => {
             return (prev.childrenCount > current.childrenCount) ? prev : current
         }) as Creature;
         props.selectionCallback(mostChildren);
     }
 
     function selectHighestGeneration() {
-        let highestGeneration = props.evoSim.actorManager.getActors().filter((actor) => actor instanceof Creature).reduce((prev, current) => {
+        const highestGeneration = props.evoSim.actorManager.getActors().filter((actor) => actor instanceof Creature).reduce((prev, current) => {
             return (prev.generation > current.generation) ? prev : current
         }) as Creature;
         props.selectionCallback(highestGeneration);

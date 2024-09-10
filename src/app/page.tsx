@@ -1,5 +1,4 @@
 "use client";
-import {EvolutionsSimulator} from "@/backend/EvolutionsSimulator";
 import Simulator from "@/app/Simulator";
 
 
