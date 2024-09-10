@@ -84,9 +84,8 @@ export function HelpDialog() {
                             </div>
                         </Card>
 
-                        <Card className="p-2 flex flex-row gap-3 cursor-pointer pr-3">
-                            <Image onClick={() => window.open("https://linktr.ee/felix.vonludowig")} width={80}
-                                   height={80} src={"/felixvonludowig.webp"} alt={"Felix von Ludowig"}
+                        <Card onClick={() => window.open("https://linktr.ee/felix.vonludowig")} className="p-2 flex flex-row gap-3 cursor-pointer pr-3">
+                            <Image width={80} height={80} src={"/felixvonludowig.webp"} alt={"Felix von Ludowig"}
                                    className={"rounded-full outline-2 outline outline-accent"}></Image>
                             <div className="flex flex-col gap-1 self-center">
                                 <p className={"text-lg"}>Felix von Ludowig</p>
