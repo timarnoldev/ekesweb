@@ -1,11 +1,12 @@
 "use client";
 import * as THREE from 'three';
-import {WebGLRenderer,  Scene, InstancedMesh, Camera} from "three";
+import {WebGLRenderer, Scene, InstancedMesh, Camera, MeshBasicMaterial, Mesh} from "three";
 import { MapControls } from 'three/addons/controls/MapControls.js';
 import {EvolutionsSimulator} from "@/backend/EvolutionsSimulator";
 import {LandType} from "@/backend/virtualtileworld/LandType";
 import {gen_color_table} from "@/backend/utils/ColorUtils";
 import {Creature} from "@/backend/actors/Creature";
+import {conditionalRendering} from "@/lib/utils";
 
 let scene:Scene;
 let camera:Camera;
@@ -13,6 +14,7 @@ let renderer:WebGLRenderer;
 let controls:MapControls;
 export let worldmesh:InstancedMesh;
 export let actormesh:InstancedMesh;
+export let selectedCreatureMesh:THREE.Mesh;
 
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2( 1, 1 );
@@ -27,8 +29,6 @@ export function register(canvas:HTMLCanvasElement, setSelectedCreature:(creature
 
     scene = new THREE.Scene();
 
-    raycaster.params.Line.threshold
-
     camera = new THREE.OrthographicCamera(-1.5, 1.5, 1, -1); //width / - 2, width / 2, height / 2, height / - 2, 0.1, 2000
 
     renderer = new THREE.WebGLRenderer( { canvas });
@@ -36,7 +36,7 @@ export function register(canvas:HTMLCanvasElement, setSelectedCreature:(creature
 
     camera.position.z = 5;
     controls = new MapControls( camera, renderer.domElement );
-    controls.enableRotate = false;
+    controls.enableRotate = true;
     controls.screenSpacePanning = true;
     controls.dampingFactor = 0.05;
 
@@ -44,16 +44,20 @@ export function register(canvas:HTMLCanvasElement, setSelectedCreature:(creature
     let newheight = canvas.clientWidth/1.5;
     renderer.setSize( canvas.clientWidth, newheight);
 
-
-
     var material = new THREE.MeshBasicMaterial( { color: 0xFFFFFF } );
     const geometry = new THREE.PlaneGeometry((aspect*2)/150,2/100,1); //0.045,50
     worldmesh = new THREE.InstancedMesh( geometry, material, 15000 );
 
     var actormaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFFF } );
     const actorgeometry = new THREE.CircleGeometry( 0.012 );
+
+    const actorgeometrySelected = new THREE.CircleGeometry( 0.03 );
+    const actormaterialSelected = new THREE.MeshBasicMaterial({ color: 0xff0000 } );
+    selectedCreatureMesh = new THREE.Mesh(actorgeometrySelected,actormaterialSelected);
+
    // actorgeometry.rotateX( Math.PI / 2 );
     actormesh = new THREE.InstancedMesh(actorgeometry,actormaterial,1200);
+
    // actormesh.frustumCulled = false;
 
    // actormesh.instanceMatrix.setUsage( THREE.DynamicDrawUsage );
@@ -91,7 +95,7 @@ export function register(canvas:HTMLCanvasElement, setSelectedCreature:(creature
 
     scene.add(actormesh);
     scene.add(worldmesh);
-
+    scene.add(selectedCreatureMesh);
 
 
 
@@ -157,12 +161,36 @@ export function updateData(evosim:EvolutionsSimulator) {
 
     worldmesh.instanceColor!.needsUpdate = true;
 
+
     for(let i=0;i<1200;i++) {
         if(i < evosim.getActorManager().getActors().length) {
             let currentActor = evosim.getActorManager().getActors()[i];
-            actormatrix.setPosition(currentActor.getXPosition()/1500*2*aspect-aspect+0.006 ,currentActor.getYPosition()/1000*2-1+0.006,1.1);
-            actormesh.setMatrixAt(i,actormatrix);
-            actormesh.setColorAt(i, color.setHex(gen_color_table[currentActor.getGeneration() % 16]));
+
+            try {
+                if((eval(conditionalRendering)(currentActor))) {
+                    if(currentActor === evosim.selectedCreature) {
+                        actormatrix.setPosition(currentActor.getXPosition()/1500*2*aspect-aspect+0.006 ,currentActor.getYPosition()/1000*2-1+0.006,1.3);
+                        selectedCreatureMesh.position.set(currentActor.getXPosition()/1500*2*aspect-aspect+0.006 ,currentActor.getYPosition()/1000*2-1+0.006,1.2);
+                    }else{
+                        actormatrix.setPosition(currentActor.getXPosition()/1500*2*aspect-aspect+0.006 ,currentActor.getYPosition()/1000*2-1+0.006,1.1);
+                        actormesh.setColorAt(i, color.setHex(gen_color_table[currentActor.getGeneration() % 15]));
+                    }
+
+                    actormesh.setMatrixAt(i,actormatrix);
+                }else{
+                    actormatrix.setPosition(100,100, 1);
+                    actormesh.setMatrixAt(i,actormatrix);
+                }
+            }catch (e:any) {
+                document.dispatchEvent(new CustomEvent("conditionalRenderingError", {detail: e.toString()}));
+
+                console.error("Error in conditional rendering: "+e);
+                actormatrix.setPosition(100,100, 1);
+                actormesh.setMatrixAt(i,actormatrix);
+            }
+
+
+
 
 
         }else{
@@ -171,11 +199,14 @@ export function updateData(evosim:EvolutionsSimulator) {
         }
     }
 
+    selectedCreatureMesh.visible = evosim.selectedCreature!=null && !evosim.selectedCreature?.killed;
+
     actormesh.updateMatrix();
     actormesh.instanceMatrix.needsUpdate = true;
     actormesh.instanceColor!.needsUpdate = true;
     actormesh.computeBoundingSphere();
     actormesh.computeBoundingBox();
+
 
 }
 

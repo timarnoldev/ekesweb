@@ -13,7 +13,6 @@ import {EvolutionsSimulator} from "@/backend/EvolutionsSimulator";
 export class Creature extends Actor {
     public brain: NeuronalNetwork;
     public feelers: Feeler[] = [];
-    public energy: number = 200;
     private moveFactor: number = Variables.moveFactor;
     private rotateFactor: number = Variables.rotateFactor;
     private moveCostMult: number = Variables.moveCostMult;
@@ -27,13 +26,14 @@ export class Creature extends Actor {
     private eatAdmission: number = Variables.eatAdmission;
     private mutation_percentage: number = Variables.mutation_percentage;
     private mutation_neurons: number = Variables.mutation_neurons;
-    public costMult: number = 1;
+    private costMult: number = 1;
+    private feelerLength: number = 15;
+    public energy: number = 200;
     public rotationAngle: number = 0;
     public outMoveForward: number = 0;
     public outRotateRight: number = 0;
     public outRotateLeft: number = 0;
     public outEat: number = 0;
-    private feelerLength: number = 15;
     public childrenCount: number = 0;
     public distanceMoved: number = 0;
 

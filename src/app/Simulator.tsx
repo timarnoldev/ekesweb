@@ -37,6 +37,7 @@ import {SingleStepButton} from "@/components/SingleStepButton";
 import {ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart";
 import {Bar, BarChart, CartesianGrid, XAxis, YAxis} from "recharts"
 import Diagrams from "@/components/Diagrams";
+import {ConditionalRenderingDialog} from "@/components/ConditionalRenderingDialog";
 
 function BenchmarkUI(props: { open: boolean }) {
     return <AlertDialog open={props.open}>
@@ -87,15 +88,6 @@ export default function Simulator() {
         let intervalID = setInterval(() => {
             console.time();
             doSimulationStep(simulator);
-
-
-            // [{"gen": 1, "count": 10}, {"gen": 2, "count": 20}]
-
-
-
-
-         //   console.log(generation_array);
-
             console.timeEnd();
         }, 11);
 
@@ -176,6 +168,7 @@ export default function Simulator() {
                             </DropdownMenu>
 
                             <Diagrams evoSim={evoSim}></Diagrams>
+                            <ConditionalRenderingDialog/>
 
                         </CardContent>
 
