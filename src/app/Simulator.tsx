@@ -163,6 +163,7 @@ export default function Simulator() {
                             if (creature == null) {
                                 evoSim!.followSelected = false;
                             }
+                            doSimulationStep(evoSim!);
                         }} evosim={evoSim} followCallback={() => evoSim!.followSelected = true}></CreatureDetails>
                     </Card>
                 </div>

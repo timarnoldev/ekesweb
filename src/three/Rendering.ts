@@ -7,6 +7,7 @@ import {LandType} from "@/backend/virtualtileworld/LandType";
 import {gen_color_table} from "@/backend/utils/ColorUtils";
 import {Creature} from "@/backend/actors/Creature";
 import {conditionalRendering} from "@/lib/utils";
+import {doSimulationStep} from "@/lib/SimulationControler";
 
 let scene:Scene;
 let camera:Camera;
@@ -127,7 +128,8 @@ export function register(canvas:HTMLCanvasElement, setSelectedCreature:(creature
            evosim.selectedCreature = creature;
            setSelectedCreature(creature);
 
-            actormesh.instanceColor!.needsUpdate = true;
+           actormesh.instanceColor!.needsUpdate = true;
+           doSimulationStep(evosim);
 
 
 
@@ -180,15 +182,10 @@ export function updateData(evosim:EvolutionsSimulator) {
                 }
             }catch (e:unknown) {
                 document.dispatchEvent(new CustomEvent("conditionalRenderingError", {detail: e!.toString()}));
-
                 console.error("Error in conditional rendering: "+e);
                 actormatrix.setPosition(100,100, 1);
                 actormesh.setMatrixAt(i,actormatrix);
             }
-
-
-
-
 
         }else{
             actormatrix.setPosition(100,100, 1);
@@ -203,7 +200,6 @@ export function updateData(evosim:EvolutionsSimulator) {
     actormesh.instanceColor!.needsUpdate = true;
     actormesh.computeBoundingSphere();
     actormesh.computeBoundingBox();
-
 
 }
 
