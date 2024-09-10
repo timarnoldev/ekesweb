@@ -122,7 +122,7 @@ export class Creature extends Actor {
             this.costMult = this.permanentCostWater;
         }
         this.energy -= this.permanentCostLand * this.costMult;
-        this.costMult += this.age * 0.07//* 1/(this.childrenCount+1); //TODO experimental change
+        this.costMult += this.age * 0.1//* 1/(this.childrenCount+1); //TODO experimental change
         if (this.energy < 100) {
             this.kill();
         }

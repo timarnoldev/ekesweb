@@ -183,12 +183,12 @@ export function animate() {
 
     controls.update();
 
-    if(simulator.followSelected&& !simulator.selectedCreature!.killed) {
+   /* if(simulator.followSelected&& !simulator.selectedCreature!.killed) {
         console.log("following selected");
         controls.target.set(simulator.selectedCreature!.getXPosition()/1500*2*aspect-aspect+0.006 ,simulator.selectedCreature!.getYPosition()/1000*2-1+0.006, 0);
         //camera.position.y = vec.y;
     }
-
+*/
     renderer.render( scene, camera );
 
 }
