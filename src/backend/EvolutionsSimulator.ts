@@ -52,6 +52,7 @@ export class EvolutionsSimulator {
             this.averageStepsPerSecond = (1000/(performance.now() - this.lastStepTime));
         }
         this.averageStepsPerSecond = this.averageStepsPerSecond*0.99 + 0.01 * (1000/(performance.now() - this.lastStepTime));
+        this.lastStepTime = performance.now();
         if(!this.ready) return;
         // Calc average values for data logging
         this.updateAverageData();
