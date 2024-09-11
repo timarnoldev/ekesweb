@@ -45,14 +45,9 @@ export class ActorManager {
             hiddenNeuron.setEntryCounter(0);
         }
 
-
-
         for (let i = 0; i < this.actors.length; i++) {
             let actor = this.actors[i];
 
-            if(this.es.speed_warning && i > 1000) {
-                break;
-            }
 
             if(i > 1500)
             {
