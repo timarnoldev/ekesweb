@@ -68,8 +68,11 @@ export class ActorManager {
             if (actor.killed) {
                 calcAgeOnDeathAverage += actor.age;
                 this.DeathesPerStep++;
-                this.actors.splice(i, 1);
-                i--;
+                let indexOfActor = this.actors.indexOf(actor);
+                this.actors.splice(indexOfActor, 1);
+                if(this.actors.length<=1500) {
+                    i--;
+                }
             }
             if ((actor as Creature).getAge() > getha) {
                 getha = (actor as Creature).getAge();
