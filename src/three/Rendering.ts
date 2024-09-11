@@ -57,7 +57,7 @@ export function register(canvas:HTMLCanvasElement, setSelectedCreature:(creature
     selectedCreatureMesh = new THREE.Mesh(actorgeometrySelected,actormaterialSelected);
 
    // actorgeometry.rotateX( Math.PI / 2 );
-    actormesh = new THREE.InstancedMesh(actorgeometry,actormaterial,1200);
+    actormesh = new THREE.InstancedMesh(actorgeometry,actormaterial,1500);
 
    // actormesh.frustumCulled = false;
 
@@ -85,7 +85,7 @@ export function register(canvas:HTMLCanvasElement, setSelectedCreature:(creature
         }
     }
 
-    for(let z=0;z<1200;z++) {
+    for(let z=0;z<1500;z++) {
 
         matrix.setPosition( 100,100, 1);
 
@@ -160,7 +160,7 @@ export function updateData(evosim:EvolutionsSimulator) {
     worldmesh.instanceColor!.needsUpdate = true;
 
 
-    for(let i=0;i<1200;i++) {
+    for(let i=0;i<1500;i++) {
         if(i < evosim.getActorManager().getActors().length) {
             const currentActor = evosim.getActorManager().getActors()[i];
 
