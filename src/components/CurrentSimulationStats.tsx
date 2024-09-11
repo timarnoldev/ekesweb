@@ -12,11 +12,11 @@ export function CurrentSimulationStats(props: {evosim: EvolutionsSimulator | nul
         const listener = () => {
             setCurrentYear(props.evosim?.time.year??0);
             setStepsPerSecond(props.evosim?.averageStepsPerSecond??0);
-            if(props.evosim!.actorManager.getActors().length > 1500 || props.evosim?.speed_warning) {
+            if(props.evosim!.actorManager.getActors().length > 1500) {
                 setWarning(true);
             }
 
-            if(props.evosim!.actorManager.getActors().length < 1200 && !props.evosim?.speed_warning) {
+            if(props.evosim!.actorManager.getActors().length < 1200) {
                 setWarning(false);
             }
 

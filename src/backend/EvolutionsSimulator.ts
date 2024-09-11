@@ -25,8 +25,6 @@ export class EvolutionsSimulator {
     public followSelected: boolean = false;
     public averageStepsPerSecond: number = 0;
     public lastStepTime: number = Date.now();
-    public speed_warning = false;
-    public speed_warning_resolved = 0;
 
     constructor() {
         this.world = new VirtualTileWorld(this.worldWidth, this.worldHeight, 10);
@@ -50,12 +48,10 @@ export class EvolutionsSimulator {
      * One Simulation Step
      */
     public doStep(): void {
-        let startTime = performance.now();
         if(this.averageStepsPerSecond === 0) {
             this.averageStepsPerSecond = (1000/(performance.now() - this.lastStepTime));
         }
         this.averageStepsPerSecond = this.averageStepsPerSecond*0.99 + 0.01 * (1000/(performance.now() - this.lastStepTime));
-        this.lastStepTime = performance.now();
         if(!this.ready) return;
         // Calc average values for data logging
         this.updateAverageData();
@@ -64,16 +60,7 @@ export class EvolutionsSimulator {
         this.world.doStep();
         this.actorManager.doStep();
         this.time.Tick();
-        let endTime = performance.now();
-        if(endTime - startTime > 400) {
-            this.speed_warning = true;
-        } else {
-            this.speed_warning_resolved++;
-            if(this.speed_warning_resolved > 10) {
-                this.speed_warning = false;
-                this.speed_warning_resolved = 0;
-            }
-        }
+
     }
 
     private updateAverageData(): void {
