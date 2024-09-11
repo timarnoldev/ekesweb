@@ -115,6 +115,9 @@ export class Creature extends Actor {
     }
 
     public createChild(): void {
+        if(this.es!.actorManager.getActors().length > 20000) {
+            return;
+        }
         if (this.energy >= Variables.createChildEnergy && this.age >= Variables.createChildAge) {
             const child = new Creature();
             child.generateFromParent(this);
@@ -129,6 +132,9 @@ export class Creature extends Actor {
     }
 
     public createFreeChild(amount: number): void {
+        if(this.es!.actorManager.getActors().length > 20000) {
+            return;
+        }
         for (let i = 0; i < amount; i++) {
             const child = new Creature();
             child.generateFromParent(this);

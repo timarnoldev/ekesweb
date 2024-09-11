@@ -1,6 +1,6 @@
 import {Creature} from "@/backend/actors/Creature";
 import {CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import KillButton from "@/components/KillButton";
 import {Button} from "@/components/ui/button";
 import {Cake, Focus, ShieldCheck, X, Zap} from "lucide-react";
@@ -57,6 +57,8 @@ export function CreatureDetails(props: {
                     <li>Children: {props.creature.childrenCount}</li>
                     <li>Walk Distance: {props.creature.distanceMoved.toFixed(2)}</li>
                 </ul>
+
+                <div className={"mt-2"}/>
 
                 <div className="flex w-full justify-end gap-2">
                     {/*<ToggleFollowSelected creature={props.creature} onPressedChange={()=>{props.followCallback()}}/>*/}

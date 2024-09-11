@@ -45,16 +45,31 @@ export class ActorManager {
             hiddenNeuron.setEntryCounter(0);
         }
 
+
+
         for (let i = 0; i < this.actors.length; i++) {
-            const actor = this.actors[i];
+            let actor = this.actors[i];
+
+            if(this.es.speed_warning && i > 1000) {
+                break;
+            }
+
+            if(i > 1500)
+            {
+                break;
+            }
+
+            if(this.actors.length > 1500) {
+                actor = this.actors[Math.floor(Math.random() * this.actors.length)];
+            }
+
+            actor.doStep();
 
             try {
                 (eval(onTheFlyModification)(actor));
             }catch (e:unknown) {
                 document.dispatchEvent(new CustomEvent("OnTheFlyModificationError", {detail: e!.toString()}));
             }
-
-            actor.doStep();
             if (actor.killed) {
                 calcAgeOnDeathAverage += actor.age;
                 this.DeathesPerStep++;

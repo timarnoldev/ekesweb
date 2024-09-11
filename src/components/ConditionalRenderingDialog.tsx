@@ -23,21 +23,21 @@ export function ConditionalRenderingDialog() {
 
     const language_definition = `
     declare class Creature {
-    public readonly energy: number = 200;
-    public readonly rotationAngle: number = 0;
-    public readonly outMoveForward: number = 0;
-    public readonly outRotateRight: number = 0;
-    public readonly outRotateLeft: number = 0;
-    public readonly outEat: number = 0;
-    public readonly childrenCount: number = 0;
-    public readonly distanceMoved: number = 0;
-    public readonly XPosition: number = 0;
-    public readonly YPosition: number = 0;
-    public readonly age: number = 0;
-    public readonly killed: boolean = false;
-    public readonly isRandom: boolean = false;
-    public readonly generation: number = 1;
-    public readonly invincible: boolean = false;
+    public energy: number = 200;
+    public rotationAngle: number = 0;
+    public outMoveForward: number = 0;
+    public outRotateRight: number = 0;
+    public outRotateLeft: number = 0;
+    public outEat: number = 0;
+    public childrenCount: number = 0;
+    public distanceMoved: number = 0;
+    public XPosition: number = 0;
+    public YPosition: number = 0;
+    public age: number = 0;
+    public killed: boolean = false;
+    public isRandom: boolean = false;
+    public generation: number = 1;
+    public invincible: boolean = false;
     }
   
        

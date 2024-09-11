@@ -28,6 +28,7 @@ import {ConditionalRenderingDialog} from "@/components/ConditionalRenderingDialo
 import {ThemeSelector} from "@/components/ThemeSelector";
 import {HelpDialog} from "@/components/HelpDialog";
 import {ParameterEditor} from "@/components/ParameterEditor";
+import {CurrentSimulationStats} from "@/components/CurrentSimulationStats";
 
 function BenchmarkUI(props: { open: boolean }) {
     return <AlertDialog open={props.open}>
@@ -77,10 +78,10 @@ export default function Simulator() {
 
     function startSimulation(simulator: EvolutionsSimulator) {
         const intervalID = setInterval(() => {
-           // console.time();
+            console.time();
             doSimulationStep(simulator);
-            //console.timeEnd();
-        }, 11);
+            console.timeEnd();
+        }, 7);
 
         setIntervalID(intervalID);
     }
@@ -137,7 +138,7 @@ export default function Simulator() {
                             </div>
                         </CardHeader>
                         <CardContent>
-
+                            <CurrentSimulationStats evosim={evoSim}></CurrentSimulationStats>
                             <Diagrams evoSim={evoSim}></Diagrams>
                             <div className={"flex flex-row gap-2 items-center mt-4"}>
                                 <ThemeSelector/>
