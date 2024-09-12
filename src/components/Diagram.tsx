@@ -54,11 +54,29 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
 
     function updateDataSource(dataSource: string | undefined) {
         setDataSource(dataSource);
+        setData([]);
+
         setDataAttribute(undefined);
         setDataAggregation(undefined);
         setDataSegregation(undefined);
+    }
+
+    function updateDataAttribute(attribute: string | undefined) {
+        setDataAttribute(attribute);
         setData([]);
     }
+
+    function updateDataSegregation(segregation: string | undefined) {
+        setDataSegregation(segregation);
+        setData([]);
+    }
+
+    function updateDataAggregation(aggregation: string | undefined) {
+        setDataAggregation(aggregation);
+        setData([]);
+    }
+
+
 
     function updateData(attribute: string, human_readable_string: string) {
         if(dataSegregation === "time") {
@@ -255,10 +273,10 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
 
                             <div className={"flex flex-col gap-3 "}>
                             <DataSourceSelect onValueChange={updateDataSource} value={dataSource}/>
-                            {dataSource === "world" && <WorldDataSelect value={dataAttribute} onValueChange={setDataAttribute}/>}
-                            {dataSource === "creature" && <CreatureDataSelect value={dataAttribute} onValueChange={setDataAttribute}/>}
-                            {dataSource === "creature" && <CreatureDataSegregationSelect value={dataSegregation} onValueChange={setDataSegregation}/>}
-                            {(dataSource === "creature"&& dataAttribute != "amount") && <CreatureDataAggregationSelect value={dataAggregation} onValueChange={setDataAggregation}/>}
+                            {dataSource === "world" && <WorldDataSelect value={dataAttribute} onValueChange={updateDataAttribute}/>}
+                            {dataSource === "creature" && <CreatureDataSelect value={dataAttribute} onValueChange={updateDataAttribute}/>}
+                            {dataSource === "creature" && <CreatureDataSegregationSelect value={dataSegregation} onValueChange={updateDataSegregation}/>}
+                            {(dataSource === "creature"&& dataAttribute != "amount") && <CreatureDataAggregationSelect value={dataAggregation} onValueChange={updateDataAggregation}/>}
                             </div>
                         </DialogDescription>
                     </DialogHeader>
