@@ -15,6 +15,7 @@ export class Creature extends Actor {
 
     private costMult: number = 1;
     private feelerLength: number = 15;
+
     public energy: number = 200;
     public rotationAngle: number = 0;
     public outMoveForward: number = 0;

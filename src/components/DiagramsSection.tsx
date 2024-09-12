@@ -1,10 +1,11 @@
 import {EvolutionsSimulator} from "@/backend/EvolutionsSimulator";
 import React, {useEffect, useState} from "react";
-import {ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart";
 import {Creature} from "@/backend/actors/Creature";
+import {ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart";
 import {Area, AreaChart, Bar, BarChart, CartesianGrid, XAxis, YAxis} from "recharts";
+import {Diagram} from "@/components/Diagram";
 
-export default function Diagrams(props: {evoSim: EvolutionsSimulator | null}) {
+export default function DiagramsSection(props: {evoSim: EvolutionsSimulator | null}) {
     const [generationArray, setGenerationArray] = useState<{ gen: string, count: number }[] | null>(null);
     const [actorSizeArray, setActorSizeArray] = useState<{ size: number }[]>([]);
     const [foodAvailable, setFoodAvailable] = useState<{ amount: number }[]>([]);
@@ -71,8 +72,11 @@ export default function Diagrams(props: {evoSim: EvolutionsSimulator | null}) {
 
 
     return <>
-        <p className="font-semibold leading-none tracking-tight mt-4 mb-4">Generation distribution</p>
 
+        <Diagram evoSim={props.evoSim} initSource={"creature"} initAggregation={""} initSegregation={"generation"} initAttribute={"amount"}/>
+        <Diagram evoSim={props.evoSim} initSource={"creature"} initAggregation={"avg"} initSegregation={"time"} initAttribute={"amount"} />
+        <Diagram evoSim={props.evoSim} initSource={"world"} initAggregation={""} initSegregation={""} initAttribute={"vegetation"}/>
+        {/*
         {generationArray && <ChartContainer config={generation_distribution_config}>
             <BarChart className="w-full" accessibilityLayer data={generationArray!}>
                 <CartesianGrid vertical={false}/>
@@ -161,6 +165,7 @@ export default function Diagrams(props: {evoSim: EvolutionsSimulator | null}) {
                     />
                 </AreaChart>
             </ChartContainer>
+            */}
 
         </>
         }

@@ -23,7 +23,7 @@ import {Creature} from "@/backend/actors/Creature";
 import {CreatureDetails} from "@/components/CreatureDetails";
 import {doSimulationStep} from "@/lib/SimulationControler";
 import {SingleStepButton} from "@/components/SingleStepButton";
-import Diagrams from "@/components/Diagrams";
+import DiagramsSection from "@/components/DiagramsSection";
 import {ConditionalRenderingDialog} from "@/components/ConditionalRenderingDialog";
 import {ThemeSelector} from "@/components/ThemeSelector";
 import {HelpDialog} from "@/components/HelpDialog";
@@ -139,7 +139,7 @@ export default function Simulator() {
                         </CardHeader>
                         <CardContent>
                             <CurrentSimulationStats evosim={evoSim}></CurrentSimulationStats>
-                            <Diagrams evoSim={evoSim}></Diagrams>
+                            <DiagramsSection evoSim={evoSim}></DiagramsSection>
                             <div className={"flex flex-row gap-2 items-center mt-4"}>
                                 <ThemeSelector/>
                                 <ConditionalRenderingDialog/></div>
