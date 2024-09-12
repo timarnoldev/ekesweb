@@ -43,8 +43,8 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
     const [data, setData] = useState<{ gen: number | null, amount: number }[]>([]);
     const [dataSource, setDataSource] = useState<string | undefined>(props.initSource);
     const [dataAttribute, setDataAttribute] = useState<string | undefined>(props.initAttribute);
-    const [dataAggregation, setDataAggregation] = useState<string | undefined>(props.initAggregation);
     const [dataSegregation, setDataSegregation] = useState<string | undefined>(props.initSegregation);
+    const [dataAggregation, setDataAggregation] = useState<string | undefined>(props.initAggregation);
 
     const [generation_distribution_config, setGenerationDistributionConfig] = useState<ChartConfig>(generation_distribution_config_template);
     const [time_distribution_config, setTimeDistributionConfig] = useState<ChartConfig>(time_distribution_config_template);
@@ -59,8 +59,6 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
         setDataSegregation(undefined);
         setData([]);
     }
-
-
 
     function updateData(attribute: string, human_readable_string: string) {
         if(dataSegregation === "time") {
@@ -179,13 +177,20 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
         }
     }
 
-
-
     useEffect(() => {
         const listener = () => {
             if (!props.evoSim) return
 
-            setIsVisible(((dataSource === "world" && dataAttribute!= null) || (dataSegregation === "time" && dataAttribute!= null && dataSegregation!= null)) || (((dataSource === "creature" && dataAttribute!= null && dataSegregation === "generation" && dataAggregation != null) || (dataSource === "creature" && dataAttribute =="amount" && dataSegregation === "generation"))))
+            if(dataSource === "world") { //to do move to handler
+                setIsVisible(dataAttribute!=null);
+            }else if(dataSource === "creature") {
+               if(dataAttribute === "amount") {
+                   setIsVisible(dataSegregation != null);
+               }else{
+                     setIsVisible(dataAttribute != null && dataSegregation != null && dataAggregation != null);
+                     console.log(dataAggregation)
+               }
+            }
 
             if(dataSource === "world") {
                 updateWorldData();
@@ -196,6 +201,7 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
                     updateData("energy", "Energy");
                 }else if(dataAttribute === "age") {
                     updateData("age", "Age");
+                    //TODO add age at death
                 }else if(dataAttribute === "generation") {
                     updateData("generation", "Generation");
                 }else if(dataAttribute === "neural_move") {
@@ -228,8 +234,6 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
 
     return <div>
 
-
-
         <div className={"flex flex-row gap-3 items-center"}>
         {
             (isVisible) &&
@@ -243,18 +247,19 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
 
             <Dialog>
                 <DialogTrigger asChild className=""><Button variant={"secondary"}  className={""}><GearIcon/></Button></DialogTrigger>
-                <DialogContent className={"w-1/3"}>
+                <DialogContent className={"min-w-fit w-2/3"}>
                     <DialogHeader>
                         <DialogTitle>Diagram Editor</DialogTitle>
                         <DialogDescription className={"flex flex-col gap-3"}>
                             Choose a data source for your diagram
 
+                            <div className={"flex flex-col gap-3 "}>
                             <DataSourceSelect onValueChange={updateDataSource} value={dataSource}/>
                             {dataSource === "world" && <WorldDataSelect value={dataAttribute} onValueChange={setDataAttribute}/>}
                             {dataSource === "creature" && <CreatureDataSelect value={dataAttribute} onValueChange={setDataAttribute}/>}
                             {dataSource === "creature" && <CreatureDataSegregationSelect value={dataSegregation} onValueChange={setDataSegregation}/>}
                             {(dataSource === "creature"&& dataAttribute != "amount") && <CreatureDataAggregationSelect value={dataAggregation} onValueChange={setDataAggregation}/>}
-
+                            </div>
                         </DialogDescription>
                     </DialogHeader>
                     <DialogBody>
@@ -269,7 +274,7 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
         </div>
 
         {
-            ((dataSource === "world" && dataAttribute) || (dataSegregation === "time" && dataAttribute && dataSegregation)) &&  <ChartContainer config={time_distribution_config}>
+            ((dataSource === "world" && dataAttribute) || (dataSegregation === "time" && dataAttribute && dataSegregation && dataAggregation)) &&  <ChartContainer config={time_distribution_config}>
                 <AreaChart
                     accessibilityLayer
                     data={data}
@@ -392,6 +397,7 @@ function CreatureDataSelect(props: {
                 <SelectItem value="amount">Amount</SelectItem>
                 <SelectItem value="energy">Energy</SelectItem>
                 <SelectItem value="age">Age</SelectItem>
+                <SelectItem value="age_at_death">Age at Death</SelectItem>
                 <SelectItem value="generation">Generation</SelectItem>
                 <SelectItem value="neural_move">Neural Out Move</SelectItem>
                 <SelectItem value="neural_rotate_right">Neural Out Rotate Right</SelectItem>
@@ -445,6 +451,4 @@ function CreatureDataAggregationSelect(props: {
         </Select>
     </div>;
 }
-
-
 
