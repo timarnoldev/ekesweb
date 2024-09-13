@@ -91,7 +91,7 @@ export function OnTheFlyModificationDialog() {
     }
 
     return <Dialog>
-        <DialogTrigger asChild  className=""><Button className={"flex flex-row gap-2"}><ChartCandlestick /> OnTheFly Modifications</Button></DialogTrigger>
+        <DialogTrigger asChild  className=""><Button className={"flex flex-row gap-2"}><ChartCandlestick /> OnTheFly</Button></DialogTrigger>
         <DialogContent className={"w-1/3"}>
             <DialogHeader>
                 <DialogTitle>OnTheFly Modification</DialogTitle>
