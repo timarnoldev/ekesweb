@@ -17,6 +17,10 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "Evolution Simulation",
   description: "Simple ecosystem simulation with creatures that can move around and reproduce.",
+    //google verification
+    verification: {
+      google: "6ZG6Z5RzfxrGZUEBGWmxUMPQ8u-nkZS_b_EEcv9XZG4"
+    }
 };
 
 export default function RootLayout({
