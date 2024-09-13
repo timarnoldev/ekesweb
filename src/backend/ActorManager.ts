@@ -14,6 +14,7 @@ export class ActorManager {
     public ageOnDeathAverage: number = 0;
     public DeathesPerStep: number = 0;
     private actors: Actor[] = [];
+    private deathActors: Actor[] = [];
     private es: EvolutionsSimulator;
     private posCounter: number = 0;
     public averageHiddenNeurons: AverageElement[] = [];
@@ -35,6 +36,7 @@ export class ActorManager {
         if (this.actors.length < 100) {
             this.createRandomActor();
         }
+        this.deathActors = [];
         let getha = 0;
         let calcaverageage = 0;
         let calcAgeOnDeathAverage = 0;
@@ -73,6 +75,7 @@ export class ActorManager {
                 if(this.actors.length<=1500) {
                     i--;
                 }
+                this.deathActors.push(actor);
             }
             if ((actor as Creature).getAge() > getha) {
                 getha = (actor as Creature).getAge();
@@ -101,12 +104,16 @@ export class ActorManager {
 
         this.averageAge = calcaverageage / this.actors.length;
         if (this.DeathesPerStep > 0) {
-            this.ageOnDeathAverage = calcAgeOnDeathAverage / this.DeathesPerStep;
+            this.ageOnDeathAverage = 0.05*calcAgeOnDeathAverage / this.DeathesPerStep+0.95*this.ageOnDeathAverage;
         }
         this.highestAge = getha;
     }
 
     public getActors(): Actor[] {
         return this.actors;
+    }
+
+    public getDeathActors(): Actor[] {
+        return this.deathActors;
     }
 }

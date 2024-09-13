@@ -40,7 +40,7 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
         },
     } satisfies ChartConfig
 
-    const [data, setData] = useState<{ gen: number | null, amount: number }[]>([]);
+    const [data, setData] = useState<{ gen: number, amount: number, lastUpdated: number }[]>([]);
     const [dataSource, setDataSource] = useState<string | undefined>(props.initSource);
     const [dataAttribute, setDataAttribute] = useState<string | undefined>(props.initAttribute);
     const [dataSegregation, setDataSegregation] = useState<string | undefined>(props.initSegregation);
@@ -51,6 +51,8 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
 
     const [diagramName, setDiagramName] = useState<string | undefined>(undefined);
     const [isVisible, setIsVisible] = useState<boolean>(false);
+    const [showLineDiagram, setShowLineDiagram] = useState<boolean>(false);
+    const [showBarDiagram, setShowBarDiagram] = useState<boolean>(false);
 
     function updateDataSource(dataSource: string | undefined) {
         setDataSource(dataSource);
@@ -59,21 +61,67 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
         setDataAttribute(undefined);
         setDataAggregation(undefined);
         setDataSegregation(undefined);
+        updateVisibility();
     }
 
     function updateDataAttribute(attribute: string | undefined) {
         setDataAttribute(attribute);
         setData([]);
+        updateVisibility();
     }
 
     function updateDataSegregation(segregation: string | undefined) {
         setDataSegregation(segregation);
         setData([]);
+        updateVisibility();
     }
 
     function updateDataAggregation(aggregation: string | undefined) {
         setDataAggregation(aggregation);
         setData([]);
+        updateVisibility();
+    }
+
+
+
+    function updateVisibility() {
+
+        if(dataSource === "world") {
+            setIsVisible(dataAttribute!=null);
+        }else if(dataSource === "creature") {
+            if(dataAttribute === "amount") {
+                setIsVisible(dataSegregation != null);
+            }else{
+                setIsVisible(dataAttribute != null && dataSegregation != null && dataAggregation != null);
+            }
+        }
+
+        if(dataSource === "world") {
+            if(dataAttribute!=null) {
+                setShowLineDiagram(true);
+            }
+            setShowBarDiagram(false);
+        }else if (dataSource === "creature") {
+            if(dataSegregation === "time") {
+                if(dataAttribute === "amount" || dataAttribute === "age_at_death") {
+                    setShowLineDiagram(true);
+                }else if(dataAttribute != null && dataAggregation != null) {
+                    setShowLineDiagram(true);
+                }else{
+                    setShowLineDiagram(false);
+                }
+                setShowBarDiagram(false);
+            }else if(dataSegregation === "generation") {
+                if(dataAttribute === "amount" || dataAttribute === "age_at_death") {
+                    setShowBarDiagram(true);
+                }else if(dataAttribute != null && dataAggregation != null) {
+                    setShowBarDiagram(true);
+                }else{
+                    setShowBarDiagram(false);
+                }
+                setShowLineDiagram(false);
+            }
+        }
     }
 
 
@@ -97,7 +145,7 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
                     newData = props.evoSim!.actorManager.getActors().reduce((acc, actor) => acc + (actor as any)[attribute], 0) / props.evoSim!.actorManager.getActors().length;
                     break;
             }
-            setData(data => [...data, {gen: -1, amount: newData}]);
+            setData(data => [...data, {gen: -1, amount: newData, lastUpdated: -1}]);
         }else if(dataSegregation === "generation") {
 
             if(dataAggregation === "max") {
@@ -138,7 +186,7 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
             }
 
             const generation_array = Object.entries(actors_per_generation).map(([key, value]) => {
-                return {"gen": parseInt(key), "amount": value.acc};
+                return {"gen": parseInt(key), "amount": value.acc, "lastUpdated": -1};
             });
 
             setData(generation_array);
@@ -152,14 +200,14 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
            setTimeDistributionConfig(time_distribution_config);
            setDiagramName("Average Vegetation over Time");
 
-           setData(data => [...data, {gen: -1, amount: props.evoSim!.world.getFoodAvailable()}]);
+           setData(data => [...data, {gen: -1, amount: props.evoSim!.world.getFoodAvailable(), lastUpdated: -1}]);
        }
        if(dataAttribute === "performance") {
            setDiagramName("Performance over Time")
            time_distribution_config.amount.label = "Steps per Second";
            setTimeDistributionConfig(time_distribution_config);
 
-           setData(data => [...data, {gen: -1, amount: props.evoSim!.averageStepsPerSecond}]);
+           setData(data => [...data, {gen: -1, amount: props.evoSim!.averageStepsPerSecond, lastUpdated: -1}]);
        }
        if(data.length>500) {
            setData(data.slice(1));
@@ -172,7 +220,7 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
             setTimeDistributionConfig(time_distribution_config);
             setDiagramName("Amount of Creatures over Time");
 
-            setData(data => [...data, {gen: -1, amount: props.evoSim!.actorManager.getActors().length}]);
+            setData(data => [...data, {gen: -1, amount: props.evoSim!.actorManager.getActors().length, lastUpdated: -1}]);
         }else if(dataSegregation === "generation") {
             generation_distribution_config.amount.label = "Creatures";
             setGenerationDistributionConfig(generation_distribution_config);
@@ -187,27 +235,70 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
             }, {} as { [key: number]: number });
 
             const generation_array = Object.entries(actors_per_generation).map(([key, value]) => {
-                return {"gen": parseInt(key), "amount": value};
+                return {"gen": parseInt(key), "amount": value, lastUpdated: -1};
             });
 
             setData(generation_array);
         }
     }
 
+    function updateDeathData() {
+        if(dataSegregation === "time") {
+            time_distribution_config.amount.label = "Age";
+            setTimeDistributionConfig(time_distribution_config);
+            setDiagramName("Average Age at Death over Time");
+            setData(data => [...data, {gen: -1, amount: props.evoSim!.getActorManager().ageOnDeathAverage, lastUpdated:-1}]);
+        }else if(dataSegregation === "generation") {
+            generation_distribution_config.amount.label = "Age";
+            setGenerationDistributionConfig(generation_distribution_config);
+            setDiagramName("Average Age at Death per Generation");
+
+            const actors_per_generation = props.evoSim!.actorManager.getDeathActors().filter((actor) => actor instanceof Creature).map((actor) => actor as Creature).reduce((acc, creature) => {
+
+                if (!acc[creature.generation]) {
+                    acc[creature.generation] = 0;
+                }
+                acc[creature.generation]=creature.age*0.3+acc[creature.generation]*0.7;
+                return acc;
+            }, {} as { [key: number]: number });
+
+            const generation_array = Object.entries(actors_per_generation).map(([key, value]) => {
+                return {"gen": parseInt(key), "amount": value, lastUpdated: props.evoSim!.time.year};
+            });
+
+            let newData = data.slice();
+
+
+            generation_array.forEach((element) => {
+                if(!newData.map((dataEl) => dataEl.gen).includes(element.gen)) {
+                    newData.push({gen: element.gen, amount: 0, lastUpdated: props.evoSim!.time.year});
+                }
+            });
+
+
+            newData.forEach((element) => {
+                if(element.gen in actors_per_generation) {
+                    element.lastUpdated = props.evoSim!.time.year;
+                    if(element.amount === 0) {
+                        element.amount = actors_per_generation[element.gen];
+                    }else{
+                        element.amount = element.amount*0.6+actors_per_generation[element.gen]*0.4;
+                    }
+                }
+            });
+
+            newData = newData.filter((element) => (props.evoSim!.time.year-element.lastUpdated) < 10);
+
+            setData(newData);
+        }
+    }
+
     useEffect(() => {
+
+        updateVisibility();
         const listener = () => {
             if (!props.evoSim) return
 
-            if(dataSource === "world") { //to do move to handler
-                setIsVisible(dataAttribute!=null);
-            }else if(dataSource === "creature") {
-               if(dataAttribute === "amount") {
-                   setIsVisible(dataSegregation != null);
-               }else{
-                     setIsVisible(dataAttribute != null && dataSegregation != null && dataAggregation != null);
-                     console.log(dataAggregation)
-               }
-            }
 
             if(dataSource === "world") {
                 updateWorldData();
@@ -218,7 +309,8 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
                     updateData("energy", "Energy");
                 }else if(dataAttribute === "age") {
                     updateData("age", "Age");
-                    //TODO add age at death
+                }else if(dataAttribute === "age_at_death") {
+                    updateDeathData();
                 }else if(dataAttribute === "generation") {
                     updateData("generation", "Generation");
                 }else if(dataAttribute === "neural_move") {
@@ -275,7 +367,7 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
                             {dataSource === "world" && <WorldDataSelect value={dataAttribute} onValueChange={updateDataAttribute}/>}
                             {dataSource === "creature" && <CreatureDataSelect value={dataAttribute} onValueChange={updateDataAttribute}/>}
                             {dataSource === "creature" && <CreatureDataSegregationSelect value={dataSegregation} onValueChange={updateDataSegregation}/>}
-                            {(dataSource === "creature"&& dataAttribute != "amount") && <CreatureDataAggregationSelect value={dataAggregation} onValueChange={updateDataAggregation}/>}
+                            {(dataSource === "creature"&& dataAttribute != "amount" && dataAttribute != "age_at_death") && <CreatureDataAggregationSelect value={dataAggregation} onValueChange={updateDataAggregation}/>}
                             </div>
                         </DialogDescription>
                     </DialogHeader>
@@ -291,7 +383,7 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
         </div>
 
         {
-            ((dataSource === "world" && dataAttribute) || (dataSegregation === "time" && dataAttribute && dataSegregation && dataAggregation)) &&  <ChartContainer config={time_distribution_config}>
+            showLineDiagram &&  <ChartContainer config={time_distribution_config}>
                 <AreaChart
                     accessibilityLayer
                     data={data}
@@ -327,7 +419,7 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
         }
 
         {
-            ((dataSource === "creature" && dataAttribute && dataSegregation === "generation" && dataAggregation) || (dataSource === "creature" && dataAttribute =="amount" && dataSegregation === "generation")) && <ChartContainer config={generation_distribution_config}>
+            showBarDiagram && <ChartContainer config={generation_distribution_config}>
                 <BarChart className="w-full" accessibilityLayer data={data}>
                     <CartesianGrid vertical={false}/>
                     <XAxis
