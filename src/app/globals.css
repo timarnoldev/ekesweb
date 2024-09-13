@@ -28,9 +28,6 @@ body {
 
  */
 
-:root {
-  overflow:hidden;
-}
 
 @layer base {
   :root {
