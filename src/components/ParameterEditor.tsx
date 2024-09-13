@@ -197,8 +197,7 @@ function KillAllDialog(props: {evoSim:EvolutionsSimulator | null}) {
             <AlertDialogHeader>
                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                 <AlertDialogDescription>
-                    This action cannot be undone. All genetic progress will be lost and a new "Generation
-                    1" will be initiated. Your parameter settings won't be changed.
+                    This action cannot be undone. All genetic progress will be lost and a new Generation 1 will be initiated. Your parameter settings won't be changed.
                 </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
