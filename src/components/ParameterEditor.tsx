@@ -3,7 +3,18 @@ import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 
 import React, {useState} from "react";
 import {Variables} from "@/backend/Variables";
-import {Button} from "@/components/ui/button";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { Button } from "@/components/ui/button"
 import {Input} from "@/components/ui/input";
 import {OnTheFlyModificationDialog} from "@/components/OnTheFlyModificationDialog";
 
@@ -70,7 +81,7 @@ export function ParameterEditor(props: { evosim: EvolutionsSimulator | null }) {
     }
 
     return <Card className={"max-h-[95%] h-fit overflow-y-auto"}>
-        <CardHeader >
+        <CardHeader>
             <CardTitle>Simulation Parameters</CardTitle>
 
         </CardHeader>
@@ -155,12 +166,45 @@ export function ParameterEditor(props: { evosim: EvolutionsSimulator | null }) {
                 </div>
                 <div className={"mt-2"}/>
 
-                <OnTheFlyModificationDialog/>
-
+                <div className={"flex flex-row justify-between w-full items-center"}>
+                    <KillAllDialog evoSim={props.evosim}/>
+                    <OnTheFlyModificationDialog/>
+                </div>
             </div>
 
 
         </CardContent>
 
     </Card>
+}
+
+
+function KillAllDialog(props: {evoSim:EvolutionsSimulator | null}) {
+    function killAll() {
+        props.evoSim!.actorManager.getActors().forEach((a)=>a.killed=true);
+        props.evoSim!.world.getTiles().forEach((r)=>{
+            r.forEach(tile=>{
+                tile.setFoodValue(1);
+            })
+        })
+    }
+
+    return <AlertDialog>
+        <AlertDialogTrigger asChild>
+            <Button variant="destructive">Kill All</Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+            <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                    This action cannot be undone. All genetic progress will be lost and a new "Generation
+                    1" will be initiated. Your parameter settings won't be changed.
+                </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={killAll}>Continue</AlertDialogAction>
+            </AlertDialogFooter>
+        </AlertDialogContent>
+    </AlertDialog>
 }

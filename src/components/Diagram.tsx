@@ -289,6 +289,8 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
 
             newData = newData.filter((element) => (props.evoSim!.time.year-element.lastUpdated) < 10);
 
+            newData.sort((a, b) => a.gen - b.gen);
+
             setData(newData);
         }
     }
