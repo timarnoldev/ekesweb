@@ -258,7 +258,7 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
                 if (!acc[creature.generation]) {
                     acc[creature.generation] = 0;
                 }
-                acc[creature.generation]=creature.age*0.3+acc[creature.generation]*0.7;
+                acc[creature.generation]=creature.age*0.15+acc[creature.generation]*0.85;
                 return acc;
             }, {} as { [key: number]: number });
 
@@ -282,7 +282,7 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
                     if(element.amount === 0) {
                         element.amount = actors_per_generation[element.gen];
                     }else{
-                        element.amount = element.amount*0.6+actors_per_generation[element.gen]*0.4;
+                        element.amount = element.amount*0.85+actors_per_generation[element.gen]*0.15;
                     }
                 }
             });
