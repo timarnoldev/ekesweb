@@ -8,7 +8,7 @@ import {
     DialogTrigger
 } from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
-import {ArrowRight, Info} from "lucide-react";
+import {ArrowRight, Github, Info} from "lucide-react";
 import {Card} from "@/components/ui/card";
 import Image from "next/image";
 import {
@@ -25,7 +25,7 @@ export function HelpDialog() {
         <DialogContent className={"w-2/3 min-w-[600px]"}>
             <DialogHeader>
                 <DialogTitle>EKES - Evolution Simulation</DialogTitle>
-                <DialogDescription>
+                <DialogDescription className={"flex flex-col"}>
                     This is a simulation of a simple ecosystem with creatures that can move around and reproduce. The
                     creatures have a limited amount of energy and can die if they run out of it. The creatures can also
                     reproduce themselves and pass on their genes to their offspring. The simulation is based on the
@@ -33,14 +33,18 @@ export function HelpDialog() {
                     selection.
 
                     <div className="mt-2"/>
-                    The project originates from the <a aria-label="Jugend forscht"
-                                                       href="https://www.jugend-forscht-bayern.de/aktuelles-allgemeines/detail/landeswettbewerb-preistraeger/#:~:text=EKES%20%2D%20Einfache%20KI%2Dbasierte%20Evolutions%2DSimulation"
-                                                       target="_blank" className="underline text-lime-950">Jugend
-                    forscht competition</a> which received
-                    state-wide recognition in 2021.
+                    <div>
+                        The project originates from the <a aria-label="Jugend forscht"
+                                                           href="https://www.jugend-forscht-bayern.de/aktuelles-allgemeines/detail/landeswettbewerb-preistraeger/#:~:text=EKES%20%2D%20Einfache%20KI%2Dbasierte%20Evolutions%2DSimulation"
+                                                           target="_blank" className="underline text-lime-950">Jugend
+                        forscht competition</a> which received
+                        state-wide recognition in 2021.
+                    </div>
 
                     <div className="mt-2"/>
 
+                    <Button onClick={()=>window.open("https://github.com/timarnoldev/ekesweb")} className={"flex flex-row gap-2 self-center"}><Github/>View Project on GitHub</Button>
+                    <div className="mt-2"/>
                     <Accordion type="single" collapsible>
                         <AccordionItem value="item-1">
                             <AccordionTrigger>Technical Details</AccordionTrigger>
@@ -65,6 +69,8 @@ export function HelpDialog() {
                     </Accordion>
 
                     <div className="mt-2"/>
+
+
 
                     <div className="font-semibold leading-none tracking-tight mt-4 mb-4 text-base">About us</div>
                     <div className="mt-2"/>
