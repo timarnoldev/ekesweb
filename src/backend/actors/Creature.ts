@@ -39,8 +39,8 @@ export class Creature extends Actor {
         this.rotationAngle = Math.random() * Math.PI * 2;
         this.brain = new NeuronalNetwork();
         this.brain.createInputNeurons(3 + this.feelers.length * 2);
-        this.brain.addHiddenLayer(25);
-        this.brain.addHiddenLayer(25);
+        this.brain.addHiddenLayer(22);
+        this.brain.addHiddenLayer(22);
         this.brain.createOutputNeurons(5);
         this.brain.connectRandomFullMeshed();
         this.brain.addBiasForAllNeurons();

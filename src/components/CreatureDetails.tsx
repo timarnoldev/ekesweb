@@ -8,6 +8,7 @@ import {EvolutionsSimulator} from "@/backend/EvolutionsSimulator";
 import {doSimulationStep} from "@/lib/SimulationControler";
 import {Toggle} from "@/components/ui/toggle";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
+import {NNVisualizer} from "@/components/NNVisualizer";
 
 
 
@@ -41,7 +42,7 @@ export function CreatureDetails(props: {
                                                                  evoSim={props.evosim!}/></div>
         </CardHeader>
     } else {
-        return <CardHeader className="w-full ">
+        return <CardHeader className="w-full">
             <CardTitle className="flex flex-row justify-between">
                 <div className="flex flex-row gap-2">
                     Creature Details
@@ -69,7 +70,9 @@ export function CreatureDetails(props: {
                     <AddEnergy creature={props.creature}/>
 
                     <KillButton creature={props.creature}/>
+
                 </div>
+
             </CardDescription>
         </CardHeader>
     }
@@ -179,8 +182,8 @@ function SelectionButtons(props: {
     return <div className="flex flex-row gap-2">
         <Button onClick={selectOldest}>Select oldest</Button>
         <Button onClick={selectYoungest}>Select youngest</Button>
-        <Button onClick={selectWithMostChildren}>Select with most children</Button>
-        <Button onClick={selectHighestGeneration}>Select highest generation</Button>
+        <Button onClick={selectWithMostChildren} className={"md:block hidden"}>Select with most children</Button>
+        <Button onClick={selectHighestGeneration} className={"md:block hidden"}>Select highest generation</Button>
 
     </div>
 }

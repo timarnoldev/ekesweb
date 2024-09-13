@@ -19,7 +19,7 @@ for (let i = 0; i < 1000; i++) {
     brains.push(brain);
 }
 
-for(let x=0;x<500;x++) { //TODO set to 500
+for(let x=0;x<100;x++) { //TODO set to 500
     for (let i = 0; i < 1000; i++) {
         const brain = brains[i];
 

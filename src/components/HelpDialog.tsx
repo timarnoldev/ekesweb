@@ -22,7 +22,7 @@ import {
 export function HelpDialog() {
     return <Dialog>
         <DialogTrigger asChild className=""><Button><Info /></Button></DialogTrigger>
-        <DialogContent className={"w-2/3 min-w-fit"}>
+        <DialogContent className={"w-2/3 min-w-[600px]"}>
             <DialogHeader>
                 <DialogTitle>EKES - Evolution Simulation</DialogTitle>
                 <DialogDescription>
@@ -74,7 +74,7 @@ export function HelpDialog() {
                         <Card onClick={() => window.open("https://tim-arnold.de")}
                               className="p-2 flex flex-row gap-3 cursor-pointer pr-3">
                             <Image width={80} height={80} src={"/timarnold.webp"} alt={"Tim Arnold"}
-                                   className={"rounded-full outline-2 outline outline-accent"}></Image>
+                                   className={"rounded-full outline-2 outline outline-accent aspect-square"}></Image>
                             <div className="flex flex-col gap-1 self-center">
                                 <p className={"text-lg"}>Tim Arnold</p>
                                 <div className={"flex flex-row gap-1 items-center"}>
@@ -86,7 +86,7 @@ export function HelpDialog() {
 
                         <Card onClick={() => window.open("https://linktr.ee/felix.vonludowig")} className="p-2 flex flex-row gap-3 cursor-pointer pr-3">
                             <Image width={80} height={80} src={"/felixvonludowig.webp"} alt={"Felix von Ludowig"}
-                                   className={"rounded-full outline-2 outline outline-accent"}></Image>
+                                   className={"rounded-full outline-2 outline outline-accent aspect-square"}></Image>
                             <div className="flex flex-col gap-1 self-center">
                                 <p className={"text-lg"}>Felix von Ludowig</p>
                                 <div className={"flex flex-row gap-1 items-center"}>

@@ -29,6 +29,7 @@ import {ThemeSelector} from "@/components/ThemeSelector";
 import {HelpDialog} from "@/components/HelpDialog";
 import {ParameterEditor} from "@/components/ParameterEditor";
 import {CurrentSimulationStats} from "@/components/CurrentSimulationStats";
+import {NNVisualizer} from "@/components/NNVisualizer";
 
 function BenchmarkUI(props: { open: boolean }) {
     return <AlertDialog open={props.open}>
@@ -78,9 +79,9 @@ export default function Simulator() {
 
     function startSimulation(simulator: EvolutionsSimulator) {
         const intervalID = setInterval(() => {
-            console.time();
+            //console.time();
             doSimulationStep(simulator);
-            console.timeEnd();
+           // console.timeEnd();
         }, 7);
 
         setIntervalID(intervalID);
@@ -105,16 +106,18 @@ export default function Simulator() {
 
     useEffect(() => {
 
+        setIsBenchmarkRunning(false);
+        const simulator = registerSimulation();
 
-        const worker = new Worker(new URL("@/backend/Benchmark", import.meta.url), {type: 'module'});
+        startSimulation(simulator);
+
+       /* const worker = new Worker(new URL("@/backend/Benchmark", import.meta.url), {type: 'module'});
         worker.onmessage = (event) => {
             const data = event.data;
             console.log(data);
-            setIsBenchmarkRunning(false);
-            const simulator = registerSimulation();
-
-            startSimulation(simulator);
         };
+
+        */
 
 
     }, []);
@@ -122,9 +125,8 @@ export default function Simulator() {
 
     return (
         <>
-            <BenchmarkUI open={isBenchmarkRunning}></BenchmarkUI>
-            <div className="flex flex-row h-svh gap-2 m-2">
-                <div className="basis-1/4 ">
+            <div className="flex flex-row h-svh gap-2 m-2 ">
+                <div className="basis-1/4 hidden lg:block">
                     <Card className={"max-h-[95%] h-fit overflow-y-auto"}>
                         <CardHeader>
                             <CardTitle>EKES Evolution Simulation</CardTitle>
@@ -149,15 +151,24 @@ export default function Simulator() {
                     </Card>
 
                 </div>
-                <div className="basis-2/4 overflow-hidden flex flex-col justify-start gap-2">
-                    <Card className=" h-fit">
+                <div className="lg:basis-2/4 basis-full overflow-hidden flex flex-col justify-start gap-2">
+                    <Card className={"lg:hidden block"}>
+                        <CardHeader>
+
+                        <div className={"text-red-500 font-bold"}>Warning</div>
+                        <div className={"mt-2"}/>
+                            <div>Use a device with a larger display or rotate your device to landscape mode to view the full simulation.</div>
+                        </CardHeader>
+                        
+                    </Card>
+                    <Card className="h-fit">
                         <div className="h-full w-full p-2">
                             <div className="h-full w-full rounded-md overflow-hidden">
                                 <canvas ref={canvasRef} className="w-full h-full "></canvas>
                             </div>
                         </div>
                     </Card>
-                    <Card className="flex flex-row w-full">
+                    <Card className="flex flex-col w-full max-h-[50%] items-center overflow-y-auto">
                         <CreatureDetails creature={selectedCreature} selectionCallback={(creature) => {
                             setSelectedCreature(creature);
                             evoSim!.selectedCreature = creature;
@@ -166,9 +177,11 @@ export default function Simulator() {
                             }
                             doSimulationStep(evoSim!);
                         }} evosim={evoSim} followCallback={() => evoSim!.followSelected = true}></CreatureDetails>
+                        {selectedCreature && <NNVisualizer creature={selectedCreature}/>}
+
                     </Card>
                 </div>
-                <div className="basis-1/4">
+                <div className="basis-1/4 hidden lg:block ">
                     <ParameterEditor evosim={evoSim}></ParameterEditor>
                 </div>
             </div>

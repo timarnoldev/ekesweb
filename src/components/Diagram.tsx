@@ -115,7 +115,6 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
                     acc[creature.generation] = {
                         acc: (creature as any)[attribute],
                         counter: 1
-
                     }
                 }
 
