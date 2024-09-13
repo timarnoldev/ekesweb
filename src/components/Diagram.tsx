@@ -89,7 +89,7 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
         if(dataSource === "world") {
             setIsVisible(dataAttribute!=null);
         }else if(dataSource === "creature") {
-            if(dataAttribute === "amount") {
+            if(dataAttribute === "amount" || dataAttribute === "age_at_death") {
                 setIsVisible(dataSegregation != null);
             }else{
                 setIsVisible(dataAttribute != null && dataSegregation != null && dataAggregation != null);
@@ -99,6 +99,8 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
         if(dataSource === "world") {
             if(dataAttribute!=null) {
                 setShowLineDiagram(true);
+            }else{
+                setShowLineDiagram(false);
             }
             setShowBarDiagram(false);
         }else if (dataSource === "creature") {
@@ -120,7 +122,13 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
                     setShowBarDiagram(false);
                 }
                 setShowLineDiagram(false);
+            }else{
+                setShowLineDiagram(false);
+                setShowBarDiagram(false);
             }
+        }else{
+            setShowLineDiagram(false);
+            setShowBarDiagram(false);
         }
     }
 
