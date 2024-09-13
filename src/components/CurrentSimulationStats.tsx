@@ -40,7 +40,7 @@ export function CurrentSimulationStats(props: {evosim: EvolutionsSimulator | nul
 
     return <div className="flex flex-col gap-2"><div className="flex flex-row justify-between gap-2">
         <div>Current Year: {currentYear.toFixed(1)}</div>
-        <div>Steps per second: {stepsPerSecond.toFixed(0)}</div>
+        <div>Steps per Sec: {stepsPerSecond.toFixed(0)}</div>
     </div>
         {warning && <div className="text-red-500">Warning: Only random creatures will get updated to ensure smooth performance. Adjust simulation parameters!</div>}
         {noNewChilds && <div className="text-red-500">Warning: No new children will be created. Adjust simulation parameters now!</div>}
