@@ -9,8 +9,11 @@ import {InputNeuron} from "@/backend/ai/Neuron/InputNeuron";
 import {InstancedMesh, Vector3} from "three";
 import {Connection} from "@/backend/ai/Connection";
 import { Text } from "@react-three/drei";
+import {useTheme} from "next-themes";
 
 export function NNVisualizer(props: {creature: Creature}) {
+
+    const theme = useTheme();
 
 
     const neurons_meaning_input = [
@@ -109,7 +112,7 @@ export function NNVisualizer(props: {creature: Creature}) {
 
             const text = <Text
                 scale={[4, 4, 4]}
-                color="black" // default
+                color={theme.theme === "dark"?"white":"black"} // default
                 anchorX="right" // default
                 anchorY="middle" // default
                 position={[-width/2+3+width*0.1-5, -(i-(brain.getInputNeurons().length-1)/2)*heightSpacing-3, 1]}
@@ -137,7 +140,7 @@ export function NNVisualizer(props: {creature: Creature}) {
 
             const text = <Text
                 scale={[4, 4, 4]}
-                color="black" // default
+                color={theme.theme === "dark"?"white":"black"} // default
                 anchorX="left" // default
                 anchorY="middle" // default
                 position={[width/2-3-width*0.1+5, -(i-(brain.getOutputNeurons().length-1)/2)*heightSpacing-3, 1]}
