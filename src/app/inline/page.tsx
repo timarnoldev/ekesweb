@@ -5,5 +5,5 @@ import Simulator from "@/app/Simulator";
 
 export default function Home() {
 
-        return <Simulator inline={false} />
+    return <Simulator inline={true} />
 }

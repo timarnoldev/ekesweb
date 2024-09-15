@@ -58,12 +58,11 @@ function BenchmarkUI(props: { open: boolean }) {
 
 
 
-export default function Simulator() {
+export default function Simulator(props: {inline: boolean}) {
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
-    const searchParams = useSearchParams()
-    const isInline = searchParams.get('inline')
+
 
     const [isBenchmarkRunning, setIsBenchmarkRunning] = useState(true);
     const [intervalID, setIntervalID] = useState<NodeJS.Timeout | null>(null);
@@ -126,7 +125,7 @@ export default function Simulator() {
 
     }, []);
 
-    if(isInline === 'true') {
+    if(props.inline) {
         return <div className="h-dvh w-dvh overflow-hidden">
             <canvas ref={canvasRef} className="w-full h-full"></canvas>
         </div>
