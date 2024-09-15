@@ -63,7 +63,6 @@ export default function Simulator() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     const searchParams = useSearchParams()
-
     const isInline = searchParams.get('inline')
 
     const [isBenchmarkRunning, setIsBenchmarkRunning] = useState(true);
