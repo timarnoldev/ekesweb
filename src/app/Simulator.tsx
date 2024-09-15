@@ -30,6 +30,7 @@ import {HelpDialog} from "@/components/HelpDialog";
 import {ParameterEditor} from "@/components/ParameterEditor";
 import {CurrentSimulationStats} from "@/components/CurrentSimulationStats";
 import {NNVisualizer} from "@/components/NNVisualizer";
+import {useSearchParams} from "next/navigation";
 
 function BenchmarkUI(props: { open: boolean }) {
     return <AlertDialog open={props.open}>
@@ -60,6 +61,10 @@ function BenchmarkUI(props: { open: boolean }) {
 export default function Simulator() {
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
+
+    const searchParams = useSearchParams()
+
+    const isInline = searchParams.get('inline')
 
     const [isBenchmarkRunning, setIsBenchmarkRunning] = useState(true);
     const [intervalID, setIntervalID] = useState<NodeJS.Timeout | null>(null);
@@ -121,6 +126,12 @@ export default function Simulator() {
 
 
     }, []);
+
+    if(isInline === 'true') {
+        return <div className="h-dvh w-dvh overflow-hidden">
+            <canvas ref={canvasRef} className="w-full h-full"></canvas>
+        </div>
+    }
 
 
     return (
