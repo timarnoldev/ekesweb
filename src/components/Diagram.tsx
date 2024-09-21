@@ -149,7 +149,7 @@ export function Diagram(props: { evoSim: EvolutionsSimulator | null, initSource:
                     newData = Math.min(...props.evoSim!.actorManager.getActors().map((actor) => (actor as any)[attribute]));
                     break;
                 case "avg":
-                    setDiagramName("Avg " + human_readable_string+" over Time");
+                    setDiagramName("Average " + human_readable_string+" over Time");
                     newData = props.evoSim!.actorManager.getActors().reduce((acc, actor) => acc + (actor as any)[attribute], 0) / props.evoSim!.actorManager.getActors().length;
                     break;
             }
